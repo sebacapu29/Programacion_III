@@ -3,6 +3,7 @@
 use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
+require_once '../src/clases/login.php';
 
 return function (App $app) {
     $container = $app->getContainer();
@@ -13,5 +14,11 @@ return function (App $app) {
 
         // Render index view
         return $container->get('renderer')->render($response, 'index.phtml', $args);
+    });
+    
+    $app->post('/login', function (Request $request, Response $response, array $args) use ($container) {
+
+        return Login::_login($request,$response,$args);
+        // return $response->write("<h1>Prueba </h1>");
     });
 };
