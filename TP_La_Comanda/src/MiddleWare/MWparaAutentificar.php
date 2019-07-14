@@ -1,6 +1,6 @@
 <?php
 
-require_once "AutentificadorJWT.php";
+require_once "../src/Entidades/AutentificadorJWT.php";
 class MWparaAutentificar
 {
  /**
@@ -29,28 +29,7 @@ class MWparaAutentificar
 		}
 		else
 		{
-			//$response->getBody()->write('<p>verifico credenciales</p>');
-
-			//perfil=Profesor (GET, POST)
-			//$datos = array('usuario' => 'rogelio@agua.com','perfil' => 'profe', 'alias' => "PinkBoy");
-			
-			//perfil=Administrador(todos)
-			$datos = array('usuario' => 'rogelio@agua.com','perfil' => 'Administrador', 'alias' => "PinkBoy");
-			
-			$token= AutentificadorJWT::CrearToken($datos);
-
-			//token vencido
-			//$token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE0OTc1Njc5NjUsImV4cCI6MTQ5NzU2NDM2NSwiYXVkIjoiNGQ5ODU5ZGU4MjY4N2Y0YzEyMDg5NzY5MzQ2OGFhNzkyYTYxNTMwYSIsImRhdGEiOnsidXN1YXJpbyI6InJvZ2VsaW9AYWd1YS5jb20iLCJwZXJmaWwiOiJBZG1pbmlzdHJhZG9yIiwiYWxpYXMiOiJQaW5rQm95In0sImFwcCI6IkFQSSBSRVNUIENEIDIwMTcifQ.GSpkrzIp2UbJWNfC1brUF_O4h8PyqykmW18vte1bhMw";
-
-			//token error
-			//$token="octavioAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE0OTc1Njc5NjUsImV4cCI6MTQ5NzU2NDM2NSwiYXVkIjoiNGQ5ODU5ZGU4MjY4N2Y0YzEyMDg5NzY5MzQ2OGFhNzkyYTYxNTMwYSIsImRhdGEiOnsidXN1YXJpbyI6InJvZ2VsaW9AYWd1YS5jb20iLCJwZXJmaWwiOiJBZG1pbmlzdHJhZG9yIiwiYWxpYXMiOiJQaW5rQm95In0sImFwcCI6IkFQSSBSRVNUIENEIDIwMTcifQ.GSpkrzIp2UbJWNfC1brUF_O4h8PyqykmW18vte1bhMw";
-	
-			//tomo el token del header
-			/*
-				$arrayConToken = $request->getHeader('token');
-				$token=$arrayConToken[0];			
-			*/
-			//var_dump($token);
+			$token= AutentificadorJWT::CrearToken("");
 			$objDelaRespuesta->esValido=true; 
 			try 
 			{
@@ -103,4 +82,35 @@ class MWparaAutentificar
 		 //$response->getBody()->write('<p>vuelvo del verificador de credenciales</p>');
 		 return $response;   
 	}
+	public function VerificarUsuarioToken($request, $response,$next) {
+		$peticion = $request->getParsedBody();
+		$objDelaRespuesta = new stdclass();
+		$token = $request->getHeader('token')[0];
+
+		if(isset($token) || $token!="")
+		{
+			$usuarioLogueado = AutentificadorJWT::ObtenerData($token);
+			$usuario = $usuarioLogueado->usuario;
+			$objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+			$consulta = $objetoAccesoDato->RetornarConsulta("select * from usuario 
+															where usuario = :user");
+	
+			$consulta->bindValue(':user', $usuario, PDO::PARAM_STR);
+			$consulta->execute();	
+			$usuario = $consulta->fetchObject("usuario");
+			if($usuario != NULL || $usuario!=false) {
+			   $response = $next($request,$response);
+			   return $response;
+			} else {
+				$objDelaRespuesta->data = "Usuario Inexistente";
+				return $response->withJson($objDelaRespuesta,401);
+			}
+		}
+		else
+		{
+			$objDelaRespuesta->data = "Debe loguearse";
+			return $response->withJson($objDelaRespuesta,401);
+		}
+        
+    }
 }
