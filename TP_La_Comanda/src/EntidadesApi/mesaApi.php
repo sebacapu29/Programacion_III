@@ -179,33 +179,33 @@ class MesaApi extends Mesa {
         return $response->withJson($objDelaRespuesta, 200);
     }
 
-    // public function Facturar($request, $response, $args) {
+    public function Facturar($request, $response, $args) {
 
-    //     $objDelaRespuesta= new stdclass();
-    //     $ArrayDeParametros = $request->getParsedBody();
-    //     $responsable = $ArrayDeParametros['responsable'];
-    //     $mesa = $ArrayDeParametros['mesa'];
-    //     $pedido = $ArrayDeParametros['pedido'];
-    //     $importe = $ArrayDeParametros['importe'];
+        $objDelaRespuesta= new stdclass();
+        $ArrayDeParametros = $request->getParsedBody();
+        $responsable = $ArrayDeParametros['responsable'];
+        $mesa = $ArrayDeParametros['mesa'];
+        $pedido = $ArrayDeParametros['pedido'];
+        $importe = $ArrayDeParametros['importe'];
 
-    //     $nuevaFactura = new Factura();
-    //     $nuevaFactura->idresponsable = $responsable;
-    //     $nuevaFactura->idpedido = $pedido;
-    //     $nuevaFactura->idmesa = $mesa;
-    //     $nuevaFactura->importe = $importe;
+        $nuevaFactura = new Factura();
+        $nuevaFactura->idresponsable = $responsable;
+        $nuevaFactura->idpedido = $pedido;
+        $nuevaFactura->idmesa = $mesa;
+        $nuevaFactura->importe = $importe;
         
-    //     $miMesa = Mesa::TraerMesaConId($mesa);
-    //     $miMesa->estado = EstadosMesa::Pagando;
+        $miMesa = Mesa::TraerMesaConId($mesa);
+        $miMesa->estado = EstadosMesa::Pagando;
 
-    //     if($mesa != NULL && $responsable != NULL  && $pedido != NULL && $importe != NULL && $miMesa->id != "" ) {
-    //         $respuesta = $nuevaFactura->AltaDeFactura();
-    //         $respuesta = ($miMesa->ModificacionDeMesa() . $respuesta); 
-    //         $objDelaRespuesta->respuesta = "Se insertaron la factura con id: $respuesta"; 
-    //     } else {
-    //         $objDelaRespuesta->respuesta = "Se necesita especificar un los parametros (Responsable, Mesa, Pedido, Importe)";
-    //     }
-    //     return $response->withJson($objDelaRespuesta, 200);
-    // }
+        if($mesa != NULL && $responsable != NULL  && $pedido != NULL && $importe != NULL && $miMesa->id != "" ) {
+            $respuesta = $nuevaFactura->AltaDeFactura();
+            $respuesta = ($miMesa->ModificacionDeMesa() . $respuesta); 
+            $objDelaRespuesta->respuesta = "Se insertaron la factura con id: $respuesta"; 
+        } else {
+            $objDelaRespuesta->respuesta = "Se necesita especificar un los parametros (Responsable, Mesa, Pedido, Importe)";
+        }
+        return $response->withJson($objDelaRespuesta, 200);
+    }
 
     public function CerrarMesa($request, $response, $args) {
 

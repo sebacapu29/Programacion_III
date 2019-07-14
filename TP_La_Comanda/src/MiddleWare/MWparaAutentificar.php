@@ -21,7 +21,7 @@ class MWparaAutentificar
          
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
-	   
+		
 		if($request->isGet())
 		{
 		// $response->getBody()->write('<p>NO necesita credenciales para los get </p>');
@@ -85,8 +85,17 @@ class MWparaAutentificar
 	public function VerificarUsuarioToken($request, $response,$next) {
 		$peticion = $request->getParsedBody();
 		$objDelaRespuesta = new stdclass();
-		$token = $request->getHeader('token')[0];
+		$token="";
+		$ruta = $request->getRequestTarget();
+		$isLogin = strpos($ruta, "login")>0;
 
+		 if($isLogin){
+			$response = $next($request,$response);
+			return $response;
+		 }
+		 else{
+			$token = $request->getHeader('token')[0];
+		 }
 		if(isset($token) || $token!="")
 		{
 			$usuarioLogueado = AutentificadorJWT::ObtenerData($token);

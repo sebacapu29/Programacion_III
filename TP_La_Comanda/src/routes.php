@@ -11,10 +11,12 @@ require_once '../src/MiddleWare/MWparaAutentificar.php';
 return function (App $app) {
     $container = $app->getContainer();
 
+    //Grupo Login
     $app->post('/login', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(json_encode(Login::_login($request,$response,$args)));
     });
 
+    //Grupo Mesa
     $app->post('/mesa', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(json_decode(MesaApi::InsertarMesa($request,$response,$args)));
     });
@@ -30,71 +32,61 @@ return function (App $app) {
     $app->post('/mesa/cerrar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(json_decode(MesaApi::CerrarMesa($request,$response,$args)));
     });
+    $app->post('/mesa/facturar', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(json_decode(MesaApi::Facturar($request,$response,$args)));
+    });
     $app->post('/mesa/comentario', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(json_decode(MesaApi::CerrarMesa($request,$response,$args)));
     });
     $app->post('/mesa/comentario/borrar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(json_decode(MesaApi::CerrarMesa($request,$response,$args)));
     });
+    $app->post('/mesa/comentario/modificar', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(json_decode(MesaApi::CerrarMesa($request,$response,$args)));
+    });
     
+    //Grupo Pedido
+    $app->get('/pedido', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(PedidoApi::TraerPedidos($request,$response,$args));
+    });
+    $app->get('/pedido/{codigo}', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(PedidoApi::TraerPedidoPorCodigo($request,$response,$args));
+    });
     $app->post('/pedido', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::HacerPedido($request,$response,$args));
     });
+    $app->post('/pedido/borrar', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(PedidoApi::BorrarPedido($request,$response,$args));
+    });
+    $app->post('/pedido/listo', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(PedidoApi::PedidoListo($request,$response,$args));
+    });
+    $app->post('/pedido/entregado', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(PedidoApi::PedidoEntregado($request,$response,$args));
+    });
+    $app->post('/pedido/cancelar', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(PedidoApi::PedidoEntregado($request,$response,$args));
+    });
 
-    // $app->group('/mesa', function () {
+    //Grupo Empleado
+    $app->get('/empleado', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(EmpleadoApi::TraerEmpleados($request,$response,$args));
+    });
+    $app->get('/empleado/{idEmpleado}', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(EmpleadoApi::TraerEmpleadoPorId($request,$response,$args));
+    });
+    $app->post('/empleado', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(EmpleadoApi::AltaEmpleado($request,$response,$args));
+    });
+    $app->post('/empleado/fichar', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(EmpleadoApi::Fichar($request,$response,$args));
+    });
+    $app->post('/empleado/suspender', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(EmpleadoApi::Suspender($request,$response,$args));
+    });
+    $app->post('/empleado/borrar', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(EmpleadoApi::PedidoEntregado($request,$response,$args));
+    });
 
-        // $this->post('/ ', \MesaApi::class . ':InsertarLaMesa');
-    
-        // $this->delete('/', \MesaApi::class . ':BorrarMesa');
-    
-        // $this->put('/', \MesaApi::class . ':ModificarMesa');
-    
-        // $this->post('/cerrar', \MesaApi::class . ':CerrarMesa');
-    
-        // $this->post('/comentario', \MesaApi::class . ':AgregarComentario');
-    
-        // $this->delete('/comentario', \MesaApi::class . ':BorrarComentario');
-    
-        // $this->put('/comentario', \MesaApi::class . ':ModificarComentario');
-    
-    // });
-    
-    // $app->group('/pedido', function () {
-    
-    //     $this->post('/', \MesaApi::class . ':HacerPedido');
-    
-        // $this->delete('/', \MesaApi::class . ':BorrarPedido');
-    
-        // $this->put('/', \MesaApi::class . ':ModificarPedido');
-    
-        // $this->post('/listo', \MesaApi::class . ':PedidoListo');
-    
-        // $this->post('/entregar', \MesaApi::class . ':PedidoEntregado');
-    
-        // $this->post('/facturar', \MesaApi::class . ':Facturar');
-    
-        // $this->post('/cancelar', \MesaApi::class . ':CancelarPedido');
-    
-        // $this->post('/items', \MesaApi::class . ':AgregarItems');
-    
-    // });
-    
-    // $app->group('/empleado', function () {
-    
-        // $this->post('/', \EmpleadosApi::class . ':InsertarEmpleado');
-    
-        // $this->delete('/', \MesaApi::class . ':BorrarEmpleado');
-    
-        // $this->put('/', \MesaApi::class . ':ModificarEmpleado');
-    
-        // $this->post('/login', \LoginApi::class . ':AltaDatos');
-    
-        // $this->post('/fichar', \EmpleadosApi::class . ':Fichar');
-    
-        // $this->post('/suspender', \EmpleadosApi::class . ':Suspender');
-    
-        // $this->post('/borrar', \EmpleadosApi::class . ':BajaLogica');
-    
-    // });
     $app->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
 };

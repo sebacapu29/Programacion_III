@@ -1,12 +1,5 @@
 <?php
 
-abstract class Estados {
-    const EnPreparacion = 1;
-    const ListoParaServir = 2;
-    const Cancelado = 3;
-    const Entregado = 4;
-}
-
 class Pedido {
     
     public $id;
@@ -100,6 +93,13 @@ class Pedido {
         $ultimoPedido = $consulta->fetchAll(PDO::FETCH_CLASS, "Pedido");
         return $ultimoPedido;
     }
+}
+
+abstract class Estados {
+    const EnPreparacion = 1;
+    const ListoParaServir = 2;
+    const Cancelado = 3;
+    const Entregado = 4;
 }
 
 ?>
