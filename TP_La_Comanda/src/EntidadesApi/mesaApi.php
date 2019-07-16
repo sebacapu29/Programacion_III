@@ -49,7 +49,13 @@ class MesaApi extends Mesa {
         $ArrayDeParametros = $request->getParsedBody();
         $mesa = $ArrayDeParametros['mesa'];
         $miMesa = Mesa::TraerMesaConId($mesa);
-        $objDelaRespuesta->respuesta = $miMesa->BajaDeMesa();
+        $retornoConsulta =$miMesa->BajaDeMesa();
+        if($retornoConsulta){
+            $objDelaRespuesta->respuesta ="Se dió de baja la mesa: " . $mesa;
+        }
+        else{
+            $objDelaRespuesta->respuesta ="Error al dar de baja la mesa: " . $mesa;    
+        }
         return $response->withJson($objDelaRespuesta, 200);
     }
 
@@ -63,7 +69,14 @@ class MesaApi extends Mesa {
         $miMesa = Mesa::TraerMesaConId($mesa);
         $miMesa->sector = $sector;
         $miMesa->estado = $estado;
-        $objDelaRespuesta->respuesta = $miMesa->ModificarMesa();
+        $retornoConsulta=$miMesa->ModificacionDeMesa();
+
+        if($retornoConsulta){
+            $objDelaRespuesta->respuesta = "Se modificó la mesa: " . $mesa;
+        }
+        else{
+            $objDelaRespuesta->respuesta = "Error al modificar mesa: " . $mesa;
+        }
         return $response->withJson($objDelaRespuesta, 200);
     }
     public function AgregarComentario($request, $response, $args) {

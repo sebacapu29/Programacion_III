@@ -14,19 +14,19 @@ class Usuario{
 			return $consulta->fetchAll(PDO::FETCH_CLASS, "usuario");		
     }
     
-  	public function Borrarusuario()
+  	public function BorrarUsuarioPorId()
     {
               $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
              $consulta = $objetoAccesoDato->RetornarConsulta("
                  delete 
                  from usuario 				
                  WHERE idempleado=:idempleado");	
-                 $consulta->bindValue(':idempleado',trim($this->clave), PDO::PARAM_STR);		
+                 $consulta->bindValue(':idempleado',trim($this->idempleado), PDO::PARAM_STR);		
                  $consulta->execute();
                  return $consulta->rowCount();
     }
  
-     public static function BorrarusuarioPorNombre($usuario)
+     public static function BorrarusUarioPorNombre($usuario)
       {
              $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
              $consulta =$objetoAccesoDato->RetornarConsulta("

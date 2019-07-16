@@ -21,10 +21,10 @@ return function (App $app) {
     $app->post('/usuario/alta', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(UsuarioApi::AltaUsuario($request,$response,$args));
     });
-    $app->post('/usuario/baja', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(UsuarioApi::BajaUsuario($request,$response,$args));
+    $app->post('/usuario/borrar', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(UsuarioApi::BorrarUsuario($request,$response,$args));
     });
-    $app->post('/usuario/modificacion', function (Request $request, Response $response, array $args) use ($container) {
+    $app->post('/usuario/modificar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(UsuarioApi::ModificacionUsuario($request,$response,$args));
     });
     //Grupo Mesa
