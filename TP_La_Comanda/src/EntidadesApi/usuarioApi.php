@@ -1,33 +1,33 @@
 <?php
-include_once '../src/clases/IApiUsable.php';
-include_once '../src/clases/AutentificadorJWT.php';
+include_once '../src/Interfaces/IApiUsuario.php';
+include_once '../src/Entidades/AutentificadorJWT.php';
 
-class UsuarioApi extends Usuario implements IApiUsable{
+class UsuarioApi extends Usuario implements IApiUsuario{
     public function AltaUsuario($request, $response, $args) {
      	
         $objDelaRespuesta= new stdclass();
         
         $ArrayDeParametros = $request->getParsedBody();
-        //var_dump($ArrayDeParametros);
         $usuario= $ArrayDeParametros['usuario'];
         $clave= $ArrayDeParametros['clave'];
+        $idempleado= $ArrayDeParametros['idempleado'];
                 
-        $miusuario = new usuario();
+        $miusuario = new Usuario();
        
         $miusuario->usuario=$usuario;
         $miusuario->clave=$clave;
-        $miusuario->perfil = "usuario";
+        $miusuario->idempleado = $idempleado;
         $miusuario->InsertarElUsuarioParametros();
 
         $usuarioToken = new stdclass();
 
         $usuarioToken->usuario =$usuario;
-        $usuarioToken->perfil = $miusuario->perfil;
+        $usuarioToken->idempleado = $idempleado;
 
         $objDelaRespuesta->respuesta="Se guardo el usuario.";   
         $token = AutentificadorJWT::CrearToken($usuarioToken);
-        $objDelaRespuesta->token = $token;
-        return $objDelaRespuesta;
+        $objDelaRespuesta->token = $token;    
+        return $response->withJson($objDelaRespuesta,200);;
     }
     public function TraerTodos($request, $response, $args) {
         $todosLosUsuarios=Usuario::TraerTodoLosusuarios();

@@ -16,7 +16,7 @@ class Pedido {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
         
         $consulta = $objetoAccesoDato->RetornarConsulta("INSERT into pedido (estado,tiempoestimado,tiempoentrega,codigo,idmesa,foto)values(:estado,:tiempoestimado,:tiempoentrega,:codigo,:idmesa,:foto)");
-        $consulta->bindValue(':estado', Estados::EnPreparacion, PDO::PARAM_INT);
+        $consulta->bindValue(':estado', $this->estado, PDO::PARAM_INT);
         $consulta->bindValue(':tiempoestimado', $this->tiempoestimado, PDO::PARAM_STR);
         $consulta->bindValue(':tiempoentrega', "00:00:00", PDO::PARAM_STR);
         $consulta->bindValue(':codigo', $nuevoCodigo, PDO::PARAM_STR);
@@ -29,7 +29,7 @@ class Pedido {
     }
 
     private static function GenerarElCodigo($id) {
-        $inicioCodigo = 'T0';
+        $inicioCodigo = 'P0';
         if($id >= 100) {
             $codigo = $inicioCodigo . $id;
         } else if($id >= 10) {
@@ -50,12 +50,12 @@ class Pedido {
 
     public function ModificacionDePedido() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-        $consulta = $objetoAccesoDato->RetornarConsulta("UPDATE pedido set estado=:estado, tiempoestimado=:tiempoestimado, tiempoentrega=:tiempoentrega, idmesa=:idmesa, foto=:foto WHERE id=:id");
+        $consulta = $objetoAccesoDato->RetornarConsulta("UPDATE pedido set estado=:estado, tiempoestimado=:tiempoestimado, tiempoentrega=:tiempoentrega, idmesa=:idmesa, foto=:foto, codigo=:codigo WHERE id=:id");
         $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
         $consulta->bindValue(':estado', $this->estado, PDO::PARAM_INT);
         $consulta->bindValue(':tiempoestimado', $this->tiempoestimado, PDO::PARAM_STR);
         $consulta->bindValue(':tiempoentrega', $this->tiempoentrega, PDO::PARAM_STR);
-        // $consulta->bindValue(':codigo', $this->codigo, PDO::PARAM_STR);
+        $consulta->bindValue(':codigo', $this->codigo, PDO::PARAM_STR);
         $consulta->bindValue(':idmesa', $this->idmesa, PDO::PARAM_INT);
         $consulta->bindValue(':foto', $this->foto, PDO::PARAM_STR);
         return $consulta->execute();
@@ -70,7 +70,8 @@ class Pedido {
 
     public static function TraerPedidoConCodigo($codigo) {
 		$objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-		$consulta = $objetoAccesoDato->RetornarConsulta("SELECT * from pedido where codigo = $codigo");
+        $consulta = $objetoAccesoDato->RetornarConsulta("SELECT * from pedido where codigo = :codigo");
+        $consulta->bindValue(':codigo',$codigo, PDO::PARAM_STR);
 		$consulta->execute();
 		$pedido = $consulta->fetchObject('Pedido');
 		return $pedido;
@@ -82,8 +83,14 @@ class Pedido {
 		$pedido = $consulta->fetchObject('Pedido');
 		return $pedido;
     }
-
-    public function mostrarDatosDelPedido() {
+    public static function TraerPedidoPorSector($sector){
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+        $consulta = $objetoAccesoDato->RetornarConsulta("SELECT p.* from pedido p INNER JOIN mesa m on m.id = p.idmesa where m.sector = $sector");
+        $consulta->execute();
+        // $pedido = $consulta->fetchObject('Pedido');
+        return $consulta->fetchAll(PDO::FETCH_CLASS, "Pedido");
+    }
+    public function MostrarDatosDelPedido() {
         return "Pedido Numero: ".$this->codigo." - Estado: ".$this->estado." - Mesa numero:  ".$this->idmesa." - id: ".$this->id." - tiempo1: ".$this->tiempoestimado." - tiempo2: ".$this->tiempoentrega." - foto: ".$this->foto;
     }
     private static function ObtenerUltimoId(){

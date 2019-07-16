@@ -13,7 +13,6 @@ class MesaApi extends Mesa {
         $ArrayDeParametros = $request->getParsedBody();
         
         $sector = $ArrayDeParametros['sector'];
-        var_dump($sector);
         switch($sector) {
             case "Cocina": 
                 $sector = SectoresMesa::Cocina;
@@ -39,9 +38,8 @@ class MesaApi extends Mesa {
             $id = $miMesa->AltaDeMesa();
             $objDelaRespuesta->respuesta = "Se inserto la mesa numero: $id";
         } else {
-            $objDelaRespuesta->respuesta = "Se necesita especificar el sector( Cocina / BarraDeTragos / BarraDeCervezas / CandyBar )";
-        }
-        
+            $objDelaRespuesta->respuesta = "Se necesita especificar el sector [ Cocina / BarraDeTragos / BarraDeCervezas / CandyBar ]";
+        }  
         return $response->withJson($objDelaRespuesta, 200);
     }
 
@@ -66,69 +64,6 @@ class MesaApi extends Mesa {
         $miMesa->sector = $sector;
         $miMesa->estado = $estado;
         $objDelaRespuesta->respuesta = $miMesa->ModificarMesa();
-        return $response->withJson($objDelaRespuesta, 200);
-    }
-
-    public function PedidoListo($request, $response, $args) {
-
-        $objDelaRespuesta= new stdclass();
-        $ArrayDeParametros = $request->getParsedBody();
-        $codigo = $ArrayDeParametros['codigo'];
-        
-        $miPedido = Pedido::TraerPedidoConCodigo($codigo);
-        $miPedido->estado = Estados::ListoParaServir;
-        
-        if($codigo != NULL && $miPedido->id != "") {
-            $respuesta = $miPedido->ModificacionDePedido();
-            $objDelaRespuesta->respuesta = "Pedido listo: $codigo";  
-        } else {
-            $objDelaRespuesta->respuesta = "Se necesita especificar un pedido (Valido)";
-        }
-
-        return $response->withJson($objDelaRespuesta, 200);
-    }
-
-    public function PedidoEntregado($request, $response, $args) {
-
-        $objDelaRespuesta= new stdclass();
-        $ArrayDeParametros = $request->getParsedBody();
-        $codigo = $ArrayDeParametros['codigo'];
-        date_default_timezone_set('America/Argentina/Buenos_Aires');
-        $tiempoentrega = date("H:i:s", time());
-
-        $miPedido = Pedido::TraerPedidoConCodigo($codigo);
-        $miPedido->tiempoentrega = $tiempoentrega;
-        $miPedido->estado = Estados::Entregado;
-        
-        $miMesa = Mesa::TraerMesaConId($miPedido->idmesa);
-        $miMesa->estado = EstadosMesa::Comiendo;
-
-        if($tiempoentrega != NULL && $miMesa->id != "" && $miPedido->id != "") {
-            $respuesta = $miPedido->ModificacionDePedido();
-            $respuesta = ($miMesa->ModificacionDeMesa() . $respuesta); 
-            $objDelaRespuesta->respuesta = "Pedido entregado: $codigo";    
-        } else {
-            $objDelaRespuesta->respuesta = "Se necesita especificar un pedido (Valido)";
-        }
-
-        return $response->withJson($objDelaRespuesta, 200);
-    }
-
-    public function CancelarPedido($request, $response, $args) {
-
-        $objDelaRespuesta= new stdclass();
-        $ArrayDeParametros = $request->getParsedBody();
-        $codigo = $ArrayDeParametros['codigo'];
-
-        $miPedido = Pedido::TraerPedidoConCodigo($codigo);
-        $miPedido->estado = Estados::Cancelado;
-
-        if($miPedido->id != "") {
-            $objDelaRespuesta->respuesta = "Pedido cancelado";    
-        } else {
-            $objDelaRespuesta->respuesta = "Se necesita especificar una pedido (Valido)";
-        }
-
         return $response->withJson($objDelaRespuesta, 200);
     }
     public function AgregarComentario($request, $response, $args) {

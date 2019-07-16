@@ -53,11 +53,12 @@ class Mesa {
 }
 
 abstract class SectoresMesa {
-    const BarraDeTragos = 1;
-    const BarraDeCervezas = 2;
-    const Cocina = 3;
-    const CandyBar = 4;
+    const BarraDeTragos = 1;//Bartender
+    const BarraDeCervezas = 2;//Cervecero
+    const Cocina = 3;//cocinero
+    const CandyBar = 4;//Mozo
 }
+
 
 abstract class EstadosMesa {
     const Comiendo = 1;

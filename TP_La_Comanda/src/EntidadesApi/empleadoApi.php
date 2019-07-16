@@ -4,7 +4,7 @@ require_once "Entidades/empleado.php";
 require_once "Entidades/horarioEmpleados.php";
 require_once "Entidades/login.php";
 
-class EmpleadosApi extends Empleado {
+class EmpleadoApi extends Empleado {
 
     public function InsertarEmpleado($request, $response, $args) {
 
@@ -43,7 +43,7 @@ class EmpleadosApi extends Empleado {
             $id = $empleado->AltaDePersonal();
             $objDelaRespuesta->respuesta = "Se inserto el empleado numero: $id";
         } else {
-            $objDelaRespuesta->respuesta = "Se necesita especificar el tipo( Socio / Mozo / Cocinero / Cervecero / Bartender )";
+            $objDelaRespuesta->respuesta = "Se necesita especificar el tipo [ Socio / Mozo / Cocinero / Cervecero / Bartender ]";
         }
         
         return $response->withJson($objDelaRespuesta, 200);

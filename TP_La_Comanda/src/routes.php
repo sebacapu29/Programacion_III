@@ -6,7 +6,9 @@ use Slim\Http\Response;
 require_once '../src/Entidades/login.php';
 require_once '../src/EntidadesApi/mesaApi.php';
 require_once '../src/EntidadesApi/pedidoApi.php';
+require_once '../src/EntidadesApi/usuarioApi.php';
 require_once '../src/MiddleWare/MWparaAutentificar.php';
+
 
 return function (App $app) {
     $container = $app->getContainer();
@@ -15,45 +17,57 @@ return function (App $app) {
     $app->post('/login', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(json_encode(Login::_login($request,$response,$args)));
     });
-
+    //Grupo Usuario
+    $app->post('/usuario/alta', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(UsuarioApi::AltaUsuario($request,$response,$args));
+    });
+    $app->post('/usuario/baja', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(UsuarioApi::BajaUsuario($request,$response,$args));
+    });
+    $app->post('/usuario/modificacion', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(UsuarioApi::ModificacionUsuario($request,$response,$args));
+    });
     //Grupo Mesa
     $app->post('/mesa', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(json_decode(MesaApi::InsertarMesa($request,$response,$args)));
+        $response->write(MesaApi::InsertarMesa($request,$response,$args));
     });
     $app->post('/mesa/borrar', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(json_decode(MesaApi::BorrarMesa($request,$response,$args)));
+        $response->write(MesaApi::BorrarMesa($request,$response,$args));
     });
     $app->post('/mesa/modificar', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(json_decode(MesaApi::ModificarMesa($request,$response,$args)));
+        $response->write(MesaApi::ModificarMesa($request,$response,$args));
     });
     $app->post('/mesa/cancelar', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(json_decode(MesaApi::CancelarMesa($request,$response,$args)));
+        $response->write(MesaApi::CancelarMesa($request,$response,$args));
     });
     $app->post('/mesa/cerrar', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(json_decode(MesaApi::CerrarMesa($request,$response,$args)));
+        $response->write(MesaApi::CerrarMesa($request,$response,$args));
     });
     $app->post('/mesa/facturar', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(json_decode(MesaApi::Facturar($request,$response,$args)));
+        $response->write(MesaApi::Facturar($request,$response,$args));
     });
     $app->post('/mesa/comentario', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(json_decode(MesaApi::CerrarMesa($request,$response,$args)));
+        $response->write(MesaApi::CerrarMesa($request,$response,$args));
     });
     $app->post('/mesa/comentario/borrar', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(json_decode(MesaApi::CerrarMesa($request,$response,$args)));
+        $response->write(MesaApi::CerrarMesa($request,$response,$args));
     });
     $app->post('/mesa/comentario/modificar', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(json_decode(MesaApi::CerrarMesa($request,$response,$args)));
+        $response->write(MesaApi::CerrarMesa($request,$response,$args));
     });
     
     //Grupo Pedido
     $app->get('/pedido', function (Request $request, Response $response, array $args) use ($container) {    
-        $response->write(PedidoApi::TraerPedidos($request,$response,$args));
+        $response->write(PedidoApi::TraerPedidosPorTipoEmpleado($request,$response,$args));
     });
     $app->get('/pedido/{codigo}', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::TraerPedidoPorCodigo($request,$response,$args));
     });
     $app->post('/pedido', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::HacerPedido($request,$response,$args));
+    });
+    $app->post('/pedido/modificar', function (Request $request, Response $response, array $args) use ($container) {    
+        $response->write(PedidoApi::ModificarPedido($request,$response,$args));
     });
     $app->post('/pedido/borrar', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::BorrarPedido($request,$response,$args));
@@ -65,10 +79,13 @@ return function (App $app) {
         $response->write(PedidoApi::PedidoEntregado($request,$response,$args));
     });
     $app->post('/pedido/cancelar', function (Request $request, Response $response, array $args) use ($container) {    
-        $response->write(PedidoApi::PedidoEntregado($request,$response,$args));
+        $response->write(PedidoApi::CancelarPedido($request,$response,$args));
     });
 
     //Grupo Empleado
+    $app->post('empleado/login', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(json_encode(Login::_login($request,$response,$args)));
+    });
     $app->get('/empleado', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(EmpleadoApi::TraerEmpleados($request,$response,$args));
     });

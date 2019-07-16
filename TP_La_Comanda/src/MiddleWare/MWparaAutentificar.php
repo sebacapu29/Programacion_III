@@ -88,8 +88,9 @@ class MWparaAutentificar
 		$token="";
 		$ruta = $request->getRequestTarget();
 		$isLogin = strpos($ruta, "login")>0;
-
-		 if($isLogin){
+		$isAltaUser = strpos($ruta,"/usuario/alta")>0;
+		
+		 if($isLogin || $isAltaUser){
 			$response = $next($request,$response);
 			return $response;
 		 }

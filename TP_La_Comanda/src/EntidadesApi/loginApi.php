@@ -12,7 +12,7 @@ class LoginApi extends Login {
         
         $usuario = $ArrayDeParametros['usuario'];
         $contrasenia = $ArrayDeParametros['contrasenia'];
-        // $idempleado = $ArrayDeParametros['idempleado'];
+        $idempleado = $ArrayDeParametros['idempleado'];
 
         $usuario = new Login();
         $usuario->usuario = $usuario;

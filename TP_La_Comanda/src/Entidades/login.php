@@ -12,18 +12,17 @@ class Login {
         $passwordParametero = $request->getParsedBody();
         $user = $passwordParametero["usuario"];     
         $pass = $passwordParametero["clave"];
-        $idTipo = $passwordParametero["idTipo"];
+        // $idTipo = $passwordParametero["idempleado"];
 
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
         
         $consulta = $objetoAccesoDato->RetornarConsulta("select * from usuario 
                                                         where usuario = :user 
-                                                        and clave = :pass 
-                                                        and idTipo= :idTipo");
+                                                        and clave = :pass ");
 
         $consulta->bindValue(':user', $user, PDO::PARAM_STR);
         $consulta->bindValue(':pass', $pass, PDO::PARAM_STR);
-        $consulta->bindValue(':idTipo', $idTipo, PDO::PARAM_STR);
+        // $consulta->bindValue(':id', $idTipo, PDO::PARAM_STR);
 
         $consulta->execute();	
         $usuario = $consulta->fetchObject("usuario");
@@ -32,7 +31,7 @@ class Login {
         {
             $usuarioToken = new stdclass();
             $usuarioToken->usuario = $usuario->usuario;
-            $usuarioToken->perfil = $usuario->perfil;
+            $usuarioToken->idempleado = $usuario->idempleado;
 
             if($usuario->clave == $passwordParametero["clave"])
             {
