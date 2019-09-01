@@ -36,8 +36,10 @@ class PedidoApi extends Pedido {
             $codigo="";
             $codigo = $miPedido->AltaDePedido();
             PedidoApi::AltaDePedidoDetalle($pedido,$codigo);
+            PedidoDetalle::TraerPedidosVendidos();
             $miMesa->ModificacionDeMesa();
-            $objDelaRespuesta->respuesta = "Pedido dado de Alta: Codigo de pedido: $codigo";    
+
+            $objDelaRespuesta->respuesta = "Pedido dado de Alta: Codigo de pedido: $codigo";   
         } else {
             $objDelaRespuesta->respuesta = "Se necesita especificar una mesa (Valida) y el tiempo estimado (HH:MM:SS)";
         }
@@ -52,6 +54,11 @@ class PedidoApi extends Pedido {
         $sNombre = explode(".",$name);
         move_uploaded_file($tmp_name, $pathFoto. $sNombre[0] . "_" . $date . '.' .$sNombre[1]);
         return  $sNombre[0] . "_" . $date . '.' .$sNombre[1];
+    }
+    public static function HacerPedidoAutomatizado($request, $response, $args){
+        $respuesta1 = PedidoApi::HacerPedido($request, $response, $args);
+        sleep(5);
+        
     }
     private static function AltaDePedidoDetalle($pedido,$codigo){
         
@@ -122,6 +129,27 @@ class PedidoApi extends Pedido {
             $respuesta = $respuesta . $aux->MostrarDatosDelPedido() . "<br>";
         }
         $objDelaRespuesta->respuesta = $respuesta;
+        return $response->withJson($objDelaRespuesta, 200);
+    }
+    public function TraerPedidosCancelados($request, $response, $args) {
+
+        $objDelaRespuesta= new stdclass();
+        $pedidos = Pedido::TraerTodosLosPedidosCancelados();
+        $objDelaRespuesta->respuesta = $pedidos;
+        return $response->withJson($objDelaRespuesta, 200);
+    }
+    public function PedidosFueraDeHorario($request,$response,$args){
+        $objDelaRespuesta= new stdclass();
+        $pedidos = Pedido::TraerTodosLosPedidos();
+        $pedidosCancelados=array();
+        
+        foreach ($pedidos as $pedido) {
+            if(strtotime($pedido->tiempoestimado) < strtotime($pedido->tiempoentrega)){
+                array_push($pedidosCancelados,$pedido);
+            }
+        }
+        $objDelaRespuesta->descripcion = 'Pedidos Que se pasaron hora de Entrega';
+        $objDelaRespuesta->respuesta = $pedidosCancelados;
         return $response->withJson($objDelaRespuesta, 200);
     }
     public function TraerPedidosPorTipoEmpleado($request, $response, $args){
@@ -204,6 +232,20 @@ class PedidoApi extends Pedido {
             $objDelaRespuesta->respuesta = "Se necesita especificar un pedido (Valido)";
         }
 
+        return $response->withJson($objDelaRespuesta, 200);
+    }
+    public function TraerMasVendidos($request, $response, $args) {
+
+        $objDelaRespuesta= new stdclass();
+        $pedidos = PedidoDetalle::TraerPedidosMasVendidos();
+        $objDelaRespuesta->respuesta = $pedidos;
+        return $response->withJson($objDelaRespuesta, 200);
+    }
+    public function TraerMenosVendidos($request, $response, $args) {//reahacer
+
+        $objDelaRespuesta= new stdclass();
+        $pedidos = PedidoDetalle::TraerPedidosMenosVendidos();
+        $objDelaRespuesta->respuesta = $pedidos;
         return $response->withJson($objDelaRespuesta, 200);
     }
     public function CancelarPedido($request, $response, $args) {

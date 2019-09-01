@@ -88,7 +88,7 @@ class MWparaAutentificar
 		$token="";
 		$ruta = $request->getRequestTarget();
 		$isLogin = strpos($ruta, "login")>0;
-		$isAltaUser = strpos($ruta,"/usuario/alta")>0;
+		$isAltaUser = strpos($ruta,"/empleado/alta")>0;
 		
 		 if($isLogin || $isAltaUser){
 			$response = $next($request,$response);
@@ -102,12 +102,12 @@ class MWparaAutentificar
 			$usuarioLogueado = AutentificadorJWT::ObtenerData($token);
 			$usuario = $usuarioLogueado->usuario;
 			$objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-			$consulta = $objetoAccesoDato->RetornarConsulta("select * from usuario 
+			$consulta = $objetoAccesoDato->RetornarConsulta("select * from empleado 
 															where usuario = :user");
 	
 			$consulta->bindValue(':user', $usuario, PDO::PARAM_STR);
 			$consulta->execute();	
-			$usuario = $consulta->fetchObject("usuario");
+			$usuario = $consulta->fetchObject("empleado");
 			if($usuario != NULL || $usuario!=false) {
 			   $response = $next($request,$response);
 			   return $response;
@@ -121,6 +121,42 @@ class MWparaAutentificar
 			$objDelaRespuesta->data = "Debe loguearse";
 			return $response->withJson($objDelaRespuesta,401);
 		}
-        
-    }
+	}
+
+	public static function VerificarUsuarioAdmin($request,$response,$next){
+
+		$peticion = $request->getParsedBody();
+		$objDelaRespuesta = new stdclass();
+		$token = $request->getHeader('token')[0];
+
+		if(isset($token) || $token!="")
+		{
+			$usuarioLogueado = AutentificadorJWT::ObtenerData($token);
+			$empleadoUsuario = $usuarioLogueado->usuario;
+			$empleadoTipo = $usuarioLogueado->tipo;
+			$idEmpleado = $usuarioLogueado->idempleado;
+
+			$objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+			$consulta = $objetoAccesoDato->RetornarConsulta("select * from empleado 
+															where  id=:idempleado");
+	
+			$consulta->bindValue(':idempleado', $idEmpleado, PDO::PARAM_INT);
+			$consulta->execute();	
+			$empleado = $consulta->fetchObject("empleado");
+
+			if(($empleado != NULL || $empleado!=false) && $empleado->tipo==6) {
+
+					$response = $next($request,$response);
+					return $response;				
+			} else {
+				$objDelaRespuesta->data = "No tiene permisos para realizar la operación";
+				return $response->withJson($objDelaRespuesta,401);
+			}
+		}
+		else
+		{
+			$objDelaRespuesta->data = "Debe loguearse";
+			return $response->withJson($objDelaRespuesta,401);
+		}
+	}
 }

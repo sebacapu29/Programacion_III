@@ -23,7 +23,7 @@ class LoginApi extends Login {
 
         if($empleado->id != "" && $usuario != NULL && $contrasenia != NULL && $idempleado != NULL) {
             $id = $usuario->AltaDatos();
-            $objDelaRespuesta->respuesta = "Se inserto el usuario numero: $id";
+            $objDelaRespuesta->respuesta = "Se inserto el empleado numero: $id";
         } else {
             $objDelaRespuesta->respuesta = "Se necesita especificar usuario, contraseña e idempleado";
         }

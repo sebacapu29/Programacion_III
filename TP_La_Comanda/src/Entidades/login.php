@@ -1,6 +1,6 @@
 <?php
 include_once '../src/AccesoDatos/AccesoDatos.php';
-include_once 'Usuario.php';
+include_once 'Empleado.php';
 include_once 'AutentificadorJWT.php';
 
 class Login {
@@ -16,7 +16,7 @@ class Login {
 
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
         
-        $consulta = $objetoAccesoDato->RetornarConsulta("select * from usuario 
+        $consulta = $objetoAccesoDato->RetornarConsulta("select * from empleado 
                                                         where usuario = :user 
                                                         and clave = :pass ");
 
@@ -25,15 +25,16 @@ class Login {
         // $consulta->bindValue(':id', $idTipo, PDO::PARAM_STR);
 
         $consulta->execute();	
-        $usuario = $consulta->fetchObject("usuario");
+        $empleado = $consulta->fetchObject("empleado");
         
-        if($usuario!=false)
+        if($empleado!=false)
         {
             $usuarioToken = new stdclass();
-            $usuarioToken->usuario = $usuario->usuario;
-            $usuarioToken->idempleado = $usuario->idempleado;
+            $usuarioToken->usuario = $empleado->usuario;
+            $usuarioToken->tipo = $empleado->tipo;
+            $usuarioToken->idempleado = $empleado->id;
 
-            if($usuario->clave == $passwordParametero["clave"])
+            if($empleado->clave == $passwordParametero["clave"])
             {
                 $objDelaRespuesta->respuesta = "Bienvenido@ " . $passwordParametero["usuario"];
                 $token = AutentificadorJWT::CrearToken($usuarioToken);

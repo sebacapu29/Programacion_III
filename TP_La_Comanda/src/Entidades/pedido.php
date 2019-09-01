@@ -8,6 +8,7 @@ class Pedido {
     public $tiempoentrega;
     public $codigo;
     public $idmesa;
+    public $nombrecliente;
     public $foto;
 
     public function AltaDePedido() {    
@@ -64,6 +65,12 @@ class Pedido {
     public static function TraerTodosLosPedidos() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
 	    $consulta = $objetoAccesoDato->RetornarConsulta("SELECT * from pedido");
+	    $consulta->execute();			
+        return $consulta->fetchAll(PDO::FETCH_CLASS, "Pedido");
+    }
+    public static function TraerTodosLosPedidosCancelados() {
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+	    $consulta = $objetoAccesoDato->RetornarConsulta("SELECT * from pedido WHERE estado = 3");
 	    $consulta->execute();			
         return $consulta->fetchAll(PDO::FETCH_CLASS, "Pedido");
     }
