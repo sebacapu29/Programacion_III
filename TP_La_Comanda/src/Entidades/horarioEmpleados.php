@@ -8,6 +8,7 @@ class Horarios {
 
     public function AltaDeHorario() {
         // $this->dias = date("Y-m-d H:i:s");
+        $horaArgentina = new DateTime("now", new DateTimeZone('America/Argentina/Buenos_Aires'));
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
         $consulta = $objetoAccesoDato->RetornarConsulta("INSERT into horarios (fechaYHoraFichada,idempleado)values(:fecha,:idempleado)");
         $consulta->bindValue(':fecha', date("Y-m-d H:i:s"), PDO::PARAM_STR);

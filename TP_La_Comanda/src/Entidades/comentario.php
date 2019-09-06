@@ -49,6 +49,48 @@ class Comentario {
 		$comentario = $consulta->fetchObject('Comentario');
 		return $comentario;
     }
+    public static function MesaConMejorPuntuacion()
+    {
+        try {
+            $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
+
+            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT c.idmesa, AVG(c.puntaje) as puntuacion_promedio,c.descripcion FROM comentario c 
+                                                             GROUP BY(c.idmesa) HAVING AVG(c.puntaje) = 
+                                                             (SELECT MAX(subquery.puntuacion_promedio) FROM 
+                                                             (SELECT AVG(c2.puntaje) as puntuacion_promedio FROM comentario c2 GROUP BY(c2.idmesa)) subquery)");
+
+            $consulta->execute();
+
+            $resultado = $consulta->fetchAll();
+        } catch (Exception $e) {
+            $mensaje = $e->getMessage();
+            $resultado = array("Estado" => "ERROR", "Mensaje" => "$mensaje");
+        }
+        finally {
+            return $resultado;
+        }
+    }
+    
+    public static function MesaConPeorPuntuacion()
+    {
+        try {
+            $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
+
+            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT c.idmesa, AVG(c.puntaje)as puntuacion_promedio ,c.descripcion 
+                                                            FROM comentario c GROUP BY(c.idmesa) HAVING AVG(c.puntaje) = 
+                                                            (SELECT MIN(subquery.puntuacion_promedio) FROM 
+                                                            (SELECT AVG(c2.puntaje) as puntuacion_promedio FROM comentario c2 GROUP BY(c2.idmesa)) subquery)");
+            $consulta->execute();
+
+            $resultado = $consulta->fetchAll();
+        } catch (Exception $e) {
+            $mensaje = $e->getMessage();
+            $resultado = array("Estado" => "ERROR", "Mensaje" => "$mensaje");
+        }
+        finally {
+            return $resultado;
+        }
+    }
 }
 
 ?>

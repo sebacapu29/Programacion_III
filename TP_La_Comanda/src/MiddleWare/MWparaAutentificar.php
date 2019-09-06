@@ -159,4 +159,40 @@ class MWparaAutentificar
 			return $response->withJson($objDelaRespuesta,401);
 		}
 	}
+	public static function VerificarEmpleadoMozo($request,$response,$next){
+
+		$peticion = $request->getParsedBody();
+		$objDelaRespuesta = new stdclass();
+		$token = $request->getHeader('token')[0];
+
+		if(isset($token) || $token!="")
+		{
+			$usuarioLogueado = AutentificadorJWT::ObtenerData($token);
+			$empleadoUsuario = $usuarioLogueado->usuario;
+			$empleadoTipo = $usuarioLogueado->tipo;
+			$idEmpleado = $usuarioLogueado->idempleado;
+
+			$objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+			$consulta = $objetoAccesoDato->RetornarConsulta("select * from empleado 
+															where  id=:idempleado");
+	
+			$consulta->bindValue(':idempleado', $idEmpleado, PDO::PARAM_INT);
+			$consulta->execute();	
+			$empleado = $consulta->fetchObject("empleado");
+
+			if(($empleado != NULL || $empleado!=false) && ($empleado->tipo==2 || $empleado->tipo==6)) {
+
+					$response = $next($request,$response);
+					return $response;				
+			} else {
+				$objDelaRespuesta->data = "No tiene permisos para realizar la operación";
+				return $response->withJson($objDelaRespuesta,401);
+			}
+		}
+		else
+		{
+			$objDelaRespuesta->data = "Debe loguearse";
+			return $response->withJson($objDelaRespuesta,401);
+		}
+	}
 }

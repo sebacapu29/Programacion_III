@@ -225,7 +225,7 @@ class MesaApi extends Mesa {
         $codigoMesa = $parametros["codigo"];
         $fecha1 = $parametros["fecha1"];
         $fecha2 = $parametros["fecha2"];
-        $respuesta = Mesa::FacturacionEntreFechas($codigoMesa,$fecha1,$fecha2);
+        $respuesta = Mesa::FacturacionEntreFechas2($codigoMesa,$fecha1,$fecha2);
         $newResponse = $response->withJson($respuesta,200);
         return $newResponse;
     }

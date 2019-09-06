@@ -6,6 +6,10 @@ class Empleado {
     public $estado;
     public $usuario;
     public $clave;
+    public $sector;
+    public $nombre;
+    public $apellido;
+    public $fechaingreso;
     
     public function AltaDeEmpleado() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
@@ -75,6 +79,22 @@ class Empleado {
 		$empleado = $consulta->fetchObject('Empleado');
 		return $empleado;
     }
+    public static function IncrementarOperacion($id,$operacion)
+	{
+        $empleado = Empleado::TraerEmpleadoConId($id);
+        if($empleado!= null || $empleado !=false){
+            $consulta = $objetoAccesoDato->RetornarConsulta("INSERT INTO operacionempleado (operacion,idempleado,sector,horaoperacion)
+                                                             VALUES (:operacion,:id,:sector,:fecha)");   
+            $consulta->bindValue(':operacion', $operacion, PDO::PARAM_STR);
+            $consulta->bindValue(':id', $id, PDO::PARAM_INT);
+            $consulta->bindValue(':sector', $empleado->sector, PDO::PARAM_INT);
+            $consulta->bindValue(':fecha', date("Y-m-d H:i:s"), PDO::PARAM_STR);    
+            $consulta->execute();
+            $respuesta = "Se incremento la cantidad de operaciones correctamente.";
+        }
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();     
+        return $respuesta;
+	}
 }
 abstract class TipoDeEmpleado {
     const Socio = 1;

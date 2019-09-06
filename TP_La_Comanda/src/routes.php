@@ -14,29 +14,30 @@ require_once '../src/MiddleWare/MWparaAutentificar.php';
 return function (App $app) {
     $container = $app->getContainer();
 
-    //Grupo Login
-    $app->post('/login', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(json_encode(Login::_login($request,$response,$args)));
-    });
     //Grupo Mesa
     $app->post('/mesa', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(MesaApi::InsertarMesa($request,$response,$args));
-    });
+    })->add(\MWparaRegistrarOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+
     $app->post('/mesa/borrar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(MesaApi::BorrarMesa($request,$response,$args));
     });
     $app->post('/mesa/modificar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(MesaApi::ModificarMesa($request,$response,$args));
-    });
+    })->add(\MWparaRegistrarOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+    
     $app->post('/mesa/cancelar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(MesaApi::CancelarMesa($request,$response,$args));
-    });
+    })->add(\MWparaRegistrarOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+
     $app->post('/mesa/cerrar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(MesaApi::CerrarMesa($request,$response,$args));
-    });
+    })->add(\MWparaRegistrarOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+
     $app->post('/mesa/facturar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(MesaApi::Facturar($request,$response,$args));
-    });
+    })->add(\MWparaRegistrarOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+
     $app->post('/mesa/comentario', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(MesaApi::CerrarMesa($request,$response,$args));
     });
@@ -46,21 +47,20 @@ return function (App $app) {
     $app->post('/mesa/comentario/modificar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(MesaApi::CerrarMesa($request,$response,$args));
     });
-    $app->get('/masUsada[/]',function (Request $request, Response $response, array $args) use ($container){
+    $app->get('/masUsada',function (Request $request, Response $response, array $args) use ($container){
      $response->write(MesaApi::class . ':MesaMasUsada')->add(\MWEmpleado::class . ':VerificarUsuarioAdmin');
     });
     
-    $app->get('/menosUsada[/]',function (Request $request, Response $response, array $args) use ($container){
+    $app->get('/menosUsada',function (Request $request, Response $response, array $args) use ($container){
         $response->write(MesaApi::class . ':MesaMasUsada')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
     });
-
-    $app->get('/masFacturada[/]',function (Request $request, Response $response, array $args) use ($container){
+    $app->get('/masFacturada',function (Request $request, Response $response, array $args) use ($container){
         $response->write(MesaApi::class . ':MesaMasUsada')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
     });
-    $app->get('/menosFacturada[/]',function (Request $request, Response $response, array $args) use ($container){
+    $app->get('/menosFacturada',function (Request $request, Response $response, array $args) use ($container){
         $response->write(MesaApi::class . ':MesaMenosUsada')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
     });
-    $app->get('/facturadaConMasImporte[/]',function (Request $request, Response $response, array $args) use ($container){
+    $app->get('/facturadaConMasImporte',function (Request $request, Response $response, array $args) use ($container){
         $response->write(MesaApi::class . ':FactiradaConMasImporte')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
     });
     $app->get('/facturadaConMenosImporte',function (Request $request, Response $response, array $args) use ($container){
@@ -76,13 +76,16 @@ return function (App $app) {
     //Grupo Pedido
     $app->get('/pedido', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::TraerPedidosPorTipoEmpleado($request,$response,$args));
-    });
+    })->add(\MWparaRegistrarOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+    
     $app->get('/pedido/cancelados', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::TraerPedidosCancelados($request,$response,$args));
-    });
+    })->add(\MWparaRegistrarOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+    
     $app->get('/pedido/fueradehorario', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::PedidosFueraDeHorario($request,$response,$args));
-    });
+    })->add(\MWparaRegistrarOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+
     $app->get('/pedido/masvendido', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::TraerMasVendidos($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
@@ -93,13 +96,16 @@ return function (App $app) {
 
     $app->post('/pedido', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::HacerPedido($request,$response,$args));
-    });
+    })->add(\MWparaRegistrarOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+
     $app->post('/pedido/modificar', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::ModificarPedido($request,$response,$args));
-    });
+    })->add(\MWparaRegistrarOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+
     $app->post('/pedido/borrar', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::BorrarPedido($request,$response,$args));
-    });
+    })->add(\MWparaRegistrarOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+
     $app->post('/pedido/listo', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::PedidoListo($request,$response,$args));
     });
@@ -108,7 +114,7 @@ return function (App $app) {
     });
     $app->post('/pedido/cancelar', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::CancelarPedido($request,$response,$args));
-    });
+    })->add(\MWparaRegistrarOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
 
     //Grupo Empleado
     $app->post('/empleado/login', function (Request $request, Response $response, array $args) use ($container) {
