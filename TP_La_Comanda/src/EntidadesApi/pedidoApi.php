@@ -5,6 +5,8 @@ require_once  '../src/Entidades/pedidoDetalle.php';
 require_once  '../src/Entidades/pedido.php';
 require_once  '../src/Entidades/comentario.php';
 require_once  '../src/Entidades/empleado.php';
+require_once  '../src/Entidades/excelhelper.php';
+require_once  '../src/Entidades/pdfhelper.php';
 require_once '../src/Entidades/AutentificadorJWT.php';
 
 class PedidoApi extends Pedido {
@@ -268,6 +270,12 @@ class PedidoApi extends Pedido {
         }
 
         return $response->withJson($objDelaRespuesta, 200);
+    }
+    public static function ExportarDatosAExcel($datos){
+        ExcelHelper::ConstruirExcel();
+   }
+   public static function ExportarDatosAPDF($datos){
+     PdfHelper::ConstruirPDF();
     }
 }   
 ?>

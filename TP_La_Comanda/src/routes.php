@@ -82,6 +82,17 @@ return function (App $app) {
         $response->write(MesaApi::class . ':PromedioMensualMesa')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
     });
     //Grupo Pedido
+    $app->get('/pedido/exportar/excel', function (Request $request, Response $response, array $args) use ($container) { 
+       // $pedidos = PedidoApi::TraerPedidosPorTipoEmpleado($request,$response,$args);
+        $strExcel = PedidoApi::ExportarDatosAExcel("asd");
+        $response->write("");
+    });//->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+    $app->get('/pedido/exportar/pdf', function (Request $request, Response $response, array $args) use ($container) { 
+        // $pedidos = PedidoApi::TraerPedidosPorTipoEmpleado($request,$response,$args);
+         $strExcel = PedidoApi::ExportarDatosAPDF("asd");
+         $response->write("");
+     });//->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+     
     $app->get('/pedido', function (Request $request, Response $response, array $args) use ($container) {    
         $response->write(PedidoApi::TraerPedidosPorTipoEmpleado($request,$response,$args));
     })->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
@@ -168,5 +179,5 @@ return function (App $app) {
         $response->write(EmpleadoApi::BorrarEmpleado($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
 
-    $app->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
+    //$app->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
 };
