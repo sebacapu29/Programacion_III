@@ -135,7 +135,7 @@ class Mesa {
         }
     }
     
-    public static function FacturaConMasImporte()
+    public static function FacturaConMayorImporte()
     {
         try {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
@@ -155,7 +155,7 @@ class Mesa {
         }
     }
     
-    public static function FacturaConMenosImporte()
+    public static function FacturaConMenorImporte()
     {
         try {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
@@ -175,7 +175,7 @@ class Mesa {
         }
     }
     
-    public static function MesaConMejorPuntuacion()
+    public static function MejorPuntuacion()
     {
         try {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
@@ -197,7 +197,7 @@ class Mesa {
         }
     }
     
-    public static function MesaConPeorPuntuacion()
+    public static function PeorPuntuacion()
     {
         try {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
@@ -219,15 +219,14 @@ class Mesa {
         }
     }
     
-    public static function FacturacionEntreFechas2($codigoMesa,$fecha1,$fecha2)
+    public static function FacturacionEntreFechas2($fecha1,$fecha2)
     {
         try {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
 
-            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT f.idmesa, f.fecha, f.importe FROM factura f 
-                                                            WHERE f.codigoMesa = :idmesa AND f.fecha BETWEEN :fecha1 AND :fecha2;");
+            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT f.fecha,f.idresponsable,f.idpedido,f.idmesa,f.importe FROM factura f 
+                                                            WHERE f.fecha BETWEEN  :fecha1 AND  :fecha2;");
 
-            $consulta->bindValue(':codigoMesa', $codigoMesa, PDO::PARAM_STR);
             $consulta->bindValue(':fecha1', $fecha1, PDO::PARAM_STR);
             $consulta->bindValue(':fecha2', $fecha2, PDO::PARAM_STR);
             $consulta->execute();
@@ -240,6 +239,67 @@ class Mesa {
         finally {
             return $resultado;
         }
+    }
+    public static function PuntuacionEntreDosFechas($fecha1,$fecha2)
+    {
+        try {
+            $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
+
+            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT * FROM comentario c 
+                                                            WHERE f.fecha BETWEEN  :fecha1 AND  :fecha2;");
+
+            $consulta->bindValue(':fecha1', $fecha1, PDO::PARAM_STR);
+            $consulta->bindValue(':fecha2', $fecha2, PDO::PARAM_STR);
+            $consulta->execute();
+
+            $resultado = $consulta->fetchAll();
+        } catch (Exception $e) {
+            $mensaje = $e->getMessage();
+            $resultado = array("Estado" => "ERROR", "Mensaje" => "$mensaje");
+        }
+        finally {
+            return $resultado;
+        }
+    }
+    public function PromedioMensualMesas($mes) {
+        $cantDias=0;
+
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+        switch ($mes) {
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
+                $cantDias = 31;
+                break;
+            case 4:
+            case 6:
+            case 9:
+            case 11:
+                $cantDias = 30;
+                break;
+            case 2:
+                if (((2019 % 4 == 0) && 
+                     !(2019 % 100 == 0))
+                     || (2019 % 400 == 0))
+                     $cantDias = 29;
+                else
+                     $cantDias = 28;
+                break;
+            default:
+                return "Mes no válido";
+                break;
+        }
+        $fechaInicial = '2019-'.$mes.'-'.'01';
+        $fechaFinal = '2019-'.$mes.'-'.$cantDias;
+        $consulta = $objetoAccesoDato->RetornarConsulta("SELECT AVG(idmesa) as promedioMensual FROM factura f
+                                                         WHERE f.fecha BETWEEN  :fecha1 AND  :fecha2");
+        $consulta->bindValue(':fecha1', $fechaInicial, PDO::PARAM_STR);
+        $consulta->bindValue(':fecha2', $fechaFinal, PDO::PARAM_STR);
+        return $consulta->execute();
     }
 }
 

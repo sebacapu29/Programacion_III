@@ -1,6 +1,8 @@
 <?php
 
 require_once "../src/Entidades/AutentificadorJWT.php";
+require_once "../src/Entidades/Empleado.php";
+
 class MWparaAutentificar
 {
  /**
@@ -180,7 +182,7 @@ class MWparaAutentificar
 			$consulta->execute();	
 			$empleado = $consulta->fetchObject("empleado");
 
-			if(($empleado != NULL || $empleado!=false) && ($empleado->tipo==2 || $empleado->tipo==6)) {
+			if(($empleado != NULL || $empleado!=false) && ($empleado->tipo==TipoDeEmpleado::Mozo || $empleado->tipo==TipoDeEmpleado::Admin || $empleado->tipo==TipoDeEmpleado::Socio)) {
 
 					$response = $next($request,$response);
 					return $response;				

@@ -159,7 +159,7 @@ class PedidoApi extends Pedido {
         $token = $request->getHeader('token')[0];
         $datos = AutentificadorJWT::ObtenerData($token);
         $empleado = Empleado::TraerEmpleadoConId((int)$datos->idempleado);
-
+        
         switch($empleado->tipo) {
             case TipoDeEmpleado::Socio: 
                 $pedidos=Pedido::TraerTodosLosPedidos();
@@ -175,6 +175,9 @@ class PedidoApi extends Pedido {
                 break;
             case TipoDeEmpleado::Bartender: 
                 $pedidos=Pedido::TraerPedidoPorSector(SectoresMesa::BarraDeTragos);
+                break;
+            case TipoDeEmpleado::Admin:
+                $pedidos=Pedido::TraerTodosLosPedidos();
                 break;
             default: 
                 $pedidos = NULL;

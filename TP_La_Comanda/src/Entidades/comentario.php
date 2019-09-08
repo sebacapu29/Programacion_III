@@ -6,13 +6,15 @@ class Comentario {
     public $puntaje;
     public $descripcion;
     public $idMesa;
-
+    public $fecha;
+    
     public function AltaDeComentario() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-        $consulta = $objetoAccesoDato->RetornarConsulta("INSERT into comentarios (puntaje,descripcion,idmesa)values(:puntaje,:descripcion,:idmesa)");
+        $consulta = $objetoAccesoDato->RetornarConsulta("INSERT into comentarios (puntaje,descripcion,idmesa,fecha)values(:puntaje,:descripcion,:idmesa,:fecha)");
         $consulta->bindValue(':puntaje', $this->puntaje, PDO::PARAM_INT);
         $consulta->bindValue(':descripcion', $this->descripcion, PDO::PARAM_STR);
         $consulta->bindValue(':idmesa', $this->idMesa, PDO::PARAM_INT);
+        $consulta->bindValue(':fecha',date("Y-m-d"),PDO::PARAM_STR);
         $consulta->execute();		
         return $objetoAccesoDato->RetornarUltimoIdInsertado();
     }

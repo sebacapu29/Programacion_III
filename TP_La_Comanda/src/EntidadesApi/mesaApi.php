@@ -197,35 +197,49 @@ class MesaApi extends Mesa {
     }
 
     public function FacturaConMasImporte($request,$response,$args){
-        $respuesta = Mesa::FacturaConMasImporte();
+        $respuesta = Mesa::FacturaConMayorImporte();
         $newResponse = $response->withJson($respuesta,200);
         return $newResponse;
     }
     
     public function FacturaConMenosImporte($request,$response,$args){
-        $respuesta = Mesa::FacturaConMenosImporte();
+        $respuesta = Mesa::FacturaConMenorImporte();
         $newResponse = $response->withJson($respuesta,200);
         return $newResponse;
     }
     
     public function MesaConMejorPuntuacion($request,$response,$args){
-        $respuesta = Mesa::MesaConMejorPuntuacion();
+        $respuesta = Mesa::MejorPuntuacion();
         $newResponse = $response->withJson($respuesta,200);
         return $newResponse;
     }
     
     public function MesaConPeorPuntuacion($request,$response,$args){
-        $respuesta = Mesa::MesaConPeorPuntuacion();
+        $respuesta = Mesa::PeorPuntuacion();
         $newResponse = $response->withJson($respuesta,200);
         return $newResponse;
     }
     
     public function FacturacionEntreFechas($request,$response,$args){
         $parametros = $request->getParsedBody();
-        $codigoMesa = $parametros["codigo"];
+        // $codigoMesa = $parametros["sector"];
         $fecha1 = $parametros["fecha1"];
         $fecha2 = $parametros["fecha2"];
-        $respuesta = Mesa::FacturacionEntreFechas2($codigoMesa,$fecha1,$fecha2);
+        $respuesta = Mesa::FacturacionEntreFechas2($fecha1,$fecha2);
+        $newResponse = $response->withJson($respuesta,200);
+        return $newResponse;
+    }
+    public function PromedioMensual($request,$response,$args){
+        $parametros = $request->getParsedBody();
+        $mes = $parametros["mes"];
+        $respuesta = Factura::PromedioMensualImporte($fecha1,$fecha2);
+        $newResponse = $response->withJson($respuesta,200);
+        return $newResponse;
+    }
+    public function PromedioMensualMesa($request,$response,$args){
+        $parametros = $request->getParsedBody();
+        $mes = $parametros["mes"];
+        $respuesta = Factura::PromedioMensualImporteMesa($fecha1,$fecha2);
         $newResponse = $response->withJson($respuesta,200);
         return $newResponse;
     }

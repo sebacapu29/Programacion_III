@@ -166,6 +166,39 @@ class EmpleadoApi extends Empleado {
 
         return $response->withJson($objDelaRespuesta, 200);
     }
+    public function OperacionesPorSector($request, $response, $args) {
+        
+        $objDelaRespuesta= new stdclass();
+
+        $infoEmpleados = InfoEmpleado::TraerOperacionesPorSector();
+
+        $objDelaRespuesta->respuesta = 'Info Empleados';
+        $objDelaRespuesta->data = $infoEmpleados;
+
+        return $response->withJson($objDelaRespuesta, 200);
+    }
+    public function OperacionesPorSectorPorEmpleados($request, $response, $args) {
+        
+        $objDelaRespuesta= new stdclass();
+
+        $infoEmpleados = InfoEmpleado::TraerOperacionesPorSectorPorEmpleados();
+
+        $objDelaRespuesta->respuesta = 'Info Empleados';
+        $objDelaRespuesta->data = $infoEmpleados;
+
+        return $response->withJson($objDelaRespuesta, 200);
+    }
+    public function OperacionesEmpleados($request, $response, $args) {
+        
+        $objDelaRespuesta= new stdclass();
+
+        $infoEmpleados = InfoEmpleado::TraerOperacionesEmpleados();
+
+        $objDelaRespuesta->respuesta = 'Info Empleados';
+        $objDelaRespuesta->data = $infoEmpleados;
+
+        return $response->withJson($objDelaRespuesta, 200);
+    }
 }
 
 ?>

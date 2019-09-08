@@ -11,7 +11,7 @@ class InfoEmpleado {
         $horaArgentina = new DateTime("now", new DateTimeZone('America/Argentina/Buenos_Aires'));
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
         $consulta = $objetoAccesoDato->RetornarConsulta("INSERT into infoEmpleado (horarioIngreso,fechaIngreso,idempleado)values(:horarioIngreso,:fechaIngreso,:idempleado)");
-        $consulta->bindValue(':fechaIngreso', date("d-m-Y"), PDO::PARAM_STR);
+        $consulta->bindValue(':fechaIngreso', date("Y-m-d"), PDO::PARAM_STR);
         $consulta->bindValue(':horarioIngreso',$horaArgentina->format('H:i:s'),PDO::PARAM_STR);
         $consulta->bindValue(':idempleado', $this->idempleado, PDO::PARAM_INT);
         $consulta->execute();
@@ -65,7 +65,38 @@ class InfoEmpleado {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
 	    $consulta = $objetoAccesoDato->RetornarConsulta("SELECT MAX(idEmpleado) from infoempleado");
 	    $consulta->execute();			
-        // return $consulta->fetchAll(PDO::FETCH_CLASS, "InfoEmpleado");
+        return $consulta->idempleado;
+    }
+    public function TraerOperacionesPorSector($request, $response, $args) {
+        
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+	    $consulta = $objetoAccesoDato->RetornarConsulta("SELECT sector,count(*) as cantidad_operaciones 
+                                                         FROM operacionempleado GROUP BY(sector)");
+	    $consulta->execute();			
+        return $consulta->idempleado;
+
+        return $response->withJson($objDelaRespuesta, 200);
+    }
+    public function TraerOperacionesPorSectorPorEmpleados($request, $response, $args) {
+        
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+	    $consulta = $objetoAccesoDato->RetornarConsulta("SELECT subquery.sector, subquery.cantidad_operacion,subquery.nombre,subquery.apellido FROM 
+                                                        (SELECT op.sector,count(*) as cantidad_operacion,emp.nombre,emp.apellido FROM operacionempleado op,empleado emp
+                                                        WHERE op.idempleado = emp.id
+                                                        GROUP BY (op.sector)) subquery;");
+	    $consulta->execute();			
+        return $consulta->idempleado;
+
+        return $response->withJson($objDelaRespuesta, 200);
+    }
+    public function TraerOperacionesEmpleados($request, $response, $args) {
+        
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+	    $consulta = $objetoAccesoDato->RetornarConsulta("SELECT subquery.cantidad_operacion,subquery.nombre,subquery.apellido FROM 
+                                                        (SELECT op.sector,count(*) as cantidad_operacion,emp.nombre,emp.apellido FROM operacionempleado op,empleado emp
+                                                        WHERE op.idempleado = emp.id
+                                                        GROUP BY (emp.id)) subquery;");
+	    $consulta->execute();			
         return $consulta->idempleado;
     }
 }

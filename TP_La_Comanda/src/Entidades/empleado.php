@@ -64,7 +64,8 @@ class Empleado {
 
     public static function TraerEmpleadoConId($id) {
 		$objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-		$consulta =$objetoAccesoDato->RetornarConsulta("SELECT * from empleado where id = $id");
+        $consulta =$objetoAccesoDato->RetornarConsulta("SELECT * from empleado where id = :id");
+        $consulta->bindValue(':id', $id, PDO::PARAM_INT);
 		$consulta->execute();
 		$empleado = $consulta->fetchObject('Empleado');
 		return $empleado;
@@ -82,9 +83,17 @@ class Empleado {
     public static function IncrementarOperacion($id,$operacion)
 	{
         $empleado = Empleado::TraerEmpleadoConId($id);
+        
         if($empleado!= null || $empleado !=false){
-            $consulta = $objetoAccesoDato->RetornarConsulta("INSERT INTO operacionempleado (operacion,idempleado,sector,horaoperacion)
-                                                             VALUES (:operacion,:id,:sector,:fecha)");   
+            
+            $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT MAX(id) as proximoid FROM operacionempleado");
+            $a = $consulta->execute();
+            $idoperacion = $consulta->fetchAll();
+
+            $consulta = $objetoAccesoDato->RetornarConsulta("INSERT INTO operacionempleado (id,operacion,idempleado,sector,horaOperacion)
+                                                             VALUES (:idoperacion,:operacion,:id,:sector,:fecha)");
+            $consulta->bindValue(':idoperacion',$idoperacion[0]["proximoid"]+1, PDO::PARAM_INT);
             $consulta->bindValue(':operacion', $operacion, PDO::PARAM_STR);
             $consulta->bindValue(':id', $id, PDO::PARAM_INT);
             $consulta->bindValue(':sector', $empleado->sector, PDO::PARAM_INT);
@@ -102,7 +111,7 @@ abstract class TipoDeEmpleado {
     const Cocinero = 3;
     const Cervecero = 4;
     const Bartender = 5;
-    const Adim=6;
+    const Admin=6;
 }
 
 abstract class EstadoEmpleado {

@@ -22,7 +22,7 @@ class Login {
 
         $consulta->bindValue(':user', $user, PDO::PARAM_STR);
         $consulta->bindValue(':pass', $pass, PDO::PARAM_STR);
-        // $consulta->bindValue(':id', $idTipo, PDO::PARAM_STR);
+         //$consulta->bindValue(':id', $idTipo, PDO::PARAM_STR);
 
         $consulta->execute();	
         $empleado = $consulta->fetchObject("empleado");

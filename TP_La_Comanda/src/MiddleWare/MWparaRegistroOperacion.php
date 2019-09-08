@@ -9,10 +9,10 @@ class MWparaRegistroOperacion
 	  public static function IncrementarOperacionAEmpleado($request, $response, $next)
 	  {
 		  $arrayConToken = $request->getHeader('token');
-		  $resourceUri = $request->getResourceUri();
+		  $resourceUri = "/" . $request->getUri()->getPath() . " [". $request->getMethod() ."]";
 		  $token=$arrayConToken[0];
 		  $payload = AutentificadorJWT::ObtenerPayLoad($token);
-		  Empleado::IncrementarOperacion($payload->datos->id);
+		  Empleado::IncrementarOperacion($payload->data->idempleado,$resourceUri);
 		  return $next($request, $response);
 	  }
 }
