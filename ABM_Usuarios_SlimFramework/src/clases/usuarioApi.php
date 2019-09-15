@@ -19,26 +19,14 @@ class UsuarioApi extends Usuario implements IApiUsable{
         $miusuario->clave=$clave;
         $miusuario->sexo=$sexo;
         $miusuario->perfil = "usuario";
-        $miusuario->InsertarElUsuarioParametros();
+        $miusuario->InsertarElUsuario();
 
         $usuarioToken = new stdclass();
 
         $usuarioToken->usuario =$usuario;
         $usuarioToken->sexo = $sexo;
         $usuarioToken->perfil = $miusuario->perfil;
-        // $archivos = $request->getUploadedFiles();
-        // $destino="./fotos/";
-        //var_dump($archivos);
-        //var_dump($archivos['foto']);
-        // if(isset($archivos['foto']))
-        // {
-        //     $nombreAnterior=$archivos['foto']->getClientFilename();
-        //     $extension= explode(".", $nombreAnterior)  ;
-        //     //var_dump($nombreAnterior);
-        //     $extension=array_reverse($extension);
-        //     $archivos['foto']->moveTo($destino.$titulo.".".$extension[0]);
-        // }       
-        //$response->getBody()->write("se guardo el cd");
+    
         $objDelaRespuesta->respuesta="Se guardo el usuario.";   
         $token = AutentificadorJWT::CrearToken($usuarioToken);
         $objDelaRespuesta->token = $token;
@@ -49,5 +37,22 @@ class UsuarioApi extends Usuario implements IApiUsable{
         $objDelaRespuesta->data =Usuario::TraerTodoLosusuarios();
       return $response ->withJson($objDelaRespuesta,200);
   }
+  public function ModificarUsuario($request, $response, $args){
+    $objDelaRespuesta= new stdclass();
+    
+    $objDelaRespuesta->data = Usuario::Modificar();
+    return $response ->withJson($objDelaRespuesta,200);
+  }
+  public function BorrarUsuario($request, $response, $args){
+    $objDelaRespuesta= new stdclass();
+    $ArrayDeParametros = $request->getParsedBody();
+
+    if(isset($ArrayDeParametros["id"])){
+      $objDelaRespuesta->data =Usuario::Borrar();
+      return $response ->withJson($objDelaRespuesta,200);
+    }
+    $objDelaRespuesta->data ="error";
+    return $response ->withJson($objDelaRespuesta,500);
+    }
 }
 ?>

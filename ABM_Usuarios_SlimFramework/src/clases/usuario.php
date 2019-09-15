@@ -2,11 +2,12 @@
 include_once '../src/clases/AccesoDatos.php';
 
 class usuario{
+    public $id;
     public $sexo;
     public $usuario;
     public $clave;
     public $perfil;
-
+    
     public static function TraerTodoLosusuarios()
 	{
 			$objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
@@ -15,14 +16,14 @@ class usuario{
 			return $consulta->fetchAll(PDO::FETCH_CLASS, "usuario");		
     }
     
-  	public function Borrarusuario()
+  	public function Borrar($id)
     {
               $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
              $consulta = $objetoAccesoDato->RetornarConsulta("
                  delete 
                  from usuario 				
-                 WHERE sexo=:sexo");	
-                 $consulta->bindValue(':sexo',trim($this->clave), PDO::PARAM_STR);		
+                 WHERE id=:id");	
+                 $consulta->bindValue(':id',$id, PDO::PARAM_STR);		
                  $consulta->execute();
                  return $consulta->rowCount();
     }
@@ -39,44 +40,28 @@ class usuario{
                  return $consulta->rowCount();
  
       }
-     public function Modificarusuario()
-      {
-             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-             $consulta =$objetoAccesoDato->RetornarConsulta("
-                 update usuario 
-                 set usuario='$this->usuario',
-                 clave='$this->clave',                 
-                 WHERE sexo='$this->sexo'");
-             return $consulta->execute();
-      }
-     
-   
-      public function Insertarusuario()
-      {
-                 $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-                 $consulta =$objetoAccesoDato->RetornarConsulta("INSERT into usuario (usuario,clave)values('$this->usuario','$this->clave')");
-                 $consulta->execute();
-                 return $objetoAccesoDato->RetornarUltimosexoInsertado();          
-      }
- 
-       public function ModificarusuarioParametros()
+       public function Modificar()
       {
              $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
              $consulta =$objetoAccesoDato->RetornarConsulta("
                  update usuario 
                  set usuario=:usuario,
-                 clave=:clave
-                 WHERE sexo=:sexo");
-             $consulta->bindValue(':sexo',$this->sexo, PDO::PARAM_INT);
+                 clave=:clave,
+                 sexo = :sexo
+                 WHERE id=:id");
+             $consulta->bindValue(':sexo',$this->sexo, PDO::PARAM_STR);
              $consulta->bindValue(':usuario',$this->usuario, PDO::PARAM_STR);
              $consulta->bindValue(':clave', $this->clave, PDO::PARAM_STR);
+             $consulta->bindValue(':perfil', $this->perfil, PDO::PARAM_STR);
+             $consulta->bindValue(':id', $this->id, PDO::PARAM_STR);
              return $consulta->execute();
       }
  
-      public function InsertarElUsuarioParametros()
+      public function InsertarElUsuario()
       {
                  $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-                 $consulta =$objetoAccesoDato->RetornarConsulta("INSERT into usuario (usuario,clave,sexo,perfil)values(:usuario,:clave,:sexo,:perfil)");
+                 $consulta =$objetoAccesoDato->RetornarConsulta("INSERT into usuario (usuario,clave,sexo,perfil)values
+                                                                (:usuario,:clave,:sexo,:perfil)");
                  $consulta->bindValue(':usuario', $this->usuario, PDO::PARAM_STR);
                  $consulta->bindValue(':clave', $this->clave, PDO::PARAM_STR);
                  $consulta->bindValue(':sexo', $this->sexo, PDO::PARAM_STR);
@@ -93,18 +78,11 @@ class usuario{
                   $this->InsertarElusuarioParametros();
               }
       }
-       public static function TraerTodoLosusuarios2()
-     {
-             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-             $consulta =$objetoAccesoDato->RetornarConsulta("select * from usuario");
-             $consulta->execute();			
-             return $consulta->fetchAll(PDO::FETCH_CLASS, "usuario");		
-     }
  
-     public static function TraerUnusuario($sexo) 
+     public static function TraerUnusuario($id) 
      {
              $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-             $consulta =$objetoAccesoDato->RetornarConsulta("select sexo,usuario,clave from usuario where sexo = $sexo");
+             $consulta =$objetoAccesoDato->RetornarConsulta("select sexo,usuario,clave from usuario where sexo = $id");
              $consulta->execute();
              $usuarioBuscado= $consulta->fetchObject('usuario');
              return $usuarioBuscado;				         
@@ -118,7 +96,6 @@ class usuario{
              $cdBuscado= $consulta->fetchObject('usuario');
                return $cdBuscado;				     
      }
- 
 }
 
 ?>

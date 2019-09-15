@@ -15,9 +15,22 @@ return function (App $app) {
     $app->post('/login', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(json_encode(Login::_login($request,$response,$args)));
     });
-    $app->post('/usuario', function (Request $request, Response $response, array $args) use ($container) {
+    $app->post('/usuario/alta', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(json_encode(UsuarioApi::AltaUsuario($request,$response,$args)));
     });
+    $app->get('/usuario', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(UsuarioApi::TraerTodos($request,$response,$args));
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
+
+    $app->post('/usuario/modificar', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(UsuarioApi::ModificarUsuario($request,$response,$args));
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
+
+    $app->post('/usuario/borrar', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(UsuarioApi::BorrarUsuario($request,$response,$args));
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
+
+
     $app->post('/compra', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(CompraApi::GestionCompra($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
@@ -26,9 +39,6 @@ return function (App $app) {
         $response->write(CompraApi::ConsultarCompra($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
 
-    $app->get('/usuario', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(UsuarioApi::TraerTodos($request,$response,$args));
-    })->add(\MWparaAutentificar::class . ':VerificarUsuario');
 
-    $app->add(\MWGuardarInfoEnDB::class . ':GuardarDatosEnDB');//middleware global
+    //$app->add(\MWGuardarInfoEnDB::class . ':GuardarDatosEnDB');//middleware global
 };

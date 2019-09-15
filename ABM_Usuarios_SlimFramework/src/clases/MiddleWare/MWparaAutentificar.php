@@ -21,8 +21,8 @@ class MWparaAutentificar
          
 		$objDelaRespuesta= new stdclass();
 		$objDelaRespuesta->respuesta="";
-		$parametros = $request->getParsedBody();
-		$token = $parametros["token"];
+		$token = $request->getHeader('token')[0];
+		//$token = $parametros["token"];
 
 		if( $request->isGet())
 		{
@@ -82,11 +82,11 @@ class MWparaAutentificar
 
 		$peticion = $request->getParsedBody();
 		$objDelaRespuesta = new stdclass();
-		$token = $peticion["token"];
+		$token = "";
 
 		if( $request->isGet())
 		{
-			$token = $request->getHeader('token')[0];
+				$token = $request->getHeader('token')[0];		
 		}
 
 		if(isset($token) || $token!="")
