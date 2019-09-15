@@ -39,8 +39,32 @@ class UsuarioApi extends Usuario implements IApiUsable{
   }
   public function ModificarUsuario($request, $response, $args){
     $objDelaRespuesta= new stdclass();
-    
-    $objDelaRespuesta->data = Usuario::Modificar();
+    $ArrayDeParametros = $request->getParsedBody();
+    $objUsuarioModificar = new Usuario();
+    $id = (int) $ArrayDeParametros["id"];
+    $usuario = $ArrayDeParametros["usuario"] ? $ArrayDeParametros["usuario"] : null;
+    $clave = $ArrayDeParametros["clave"];
+    $sexo = $ArrayDeParametros["sexo"];
+    $perfil = $ArrayDeParametros["perfil"];
+    $usuarioActual=null;
+
+    if(isset($id)){
+      $usuarioActual = Usuario::TraerUsuarioPorId($id);
+      var_dump($usuarioActual);
+    }
+    if($usuario!=null){
+      $usuarioActual->usuario = $usuario;
+    }
+    if(isset($clave)){
+      $usuarioActual->clave = $clave;
+    }
+    if(isset($sexo)){
+      $usuarioActual->sexo = $sexo;
+    }
+    if(isset($tipo)){
+      $usuarioActual->perfil = $perfil;
+    }
+    $objDelaRespuesta->data = $usuarioActual->Modificar();
     return $response ->withJson($objDelaRespuesta,200);
   }
   public function BorrarUsuario($request, $response, $args){
@@ -48,7 +72,7 @@ class UsuarioApi extends Usuario implements IApiUsable{
     $ArrayDeParametros = $request->getParsedBody();
 
     if(isset($ArrayDeParametros["id"])){
-      $objDelaRespuesta->data =Usuario::Borrar();
+      $objDelaRespuesta->data =Usuario::Borrar($ArrayDeParametros["id"]);
       return $response ->withJson($objDelaRespuesta,200);
     }
     $objDelaRespuesta->data ="error";

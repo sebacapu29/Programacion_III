@@ -47,13 +47,15 @@ class usuario{
                  update usuario 
                  set usuario=:usuario,
                  clave=:clave,
-                 sexo = :sexo
+                 sexo = :sexo,
+                 perfil = :perfil
                  WHERE id=:id");
              $consulta->bindValue(':sexo',$this->sexo, PDO::PARAM_STR);
              $consulta->bindValue(':usuario',$this->usuario, PDO::PARAM_STR);
              $consulta->bindValue(':clave', $this->clave, PDO::PARAM_STR);
              $consulta->bindValue(':perfil', $this->perfil, PDO::PARAM_STR);
              $consulta->bindValue(':id', $this->id, PDO::PARAM_STR);
+             
              return $consulta->execute();
       }
  
@@ -79,10 +81,11 @@ class usuario{
               }
       }
  
-     public static function TraerUnusuario($id) 
+     public static function TraerUsuarioPorId($id) 
      {
              $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-             $consulta =$objetoAccesoDato->RetornarConsulta("select sexo,usuario,clave from usuario where sexo = $id");
+             $consulta =$objetoAccesoDato->RetornarConsulta("select * from usuario where id = :id");
+             $consulta->bindValue(':id', $id, PDO::PARAM_INT);
              $consulta->execute();
              $usuarioBuscado= $consulta->fetchObject('usuario');
              return $usuarioBuscado;				         
