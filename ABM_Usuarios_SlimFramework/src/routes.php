@@ -39,6 +39,7 @@ return function (App $app) {
         $response->write(CompraApi::ConsultarCompra($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
 
-
+    $app->add(\MWparaCORS::class . 'HabilitarCORSTodos');
+    $app->add(new Tuupola\Middleware\CorsMiddleware);
     //$app->add(\MWGuardarInfoEnDB::class . ':GuardarDatosEnDB');//middleware global
 };
