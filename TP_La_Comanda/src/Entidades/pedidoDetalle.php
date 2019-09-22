@@ -2,7 +2,7 @@
 
 class pedidoDetalle {
 
-    // public $id;
+    public $id;
     public $cantidad;
     public $descripcion;
     public $codigopedido;
@@ -43,28 +43,36 @@ class pedidoDetalle {
     }
     public static function TraerPedidosMasVendidos(){
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-        $consulta = $objetoAccesoDato->RetornarConsulta("SELECT p.id, m.descripcion, count(p.id) as cantidad_ventas
-                                                            FROM pedidodetalle p INNER JOIN menu m
-                                                            ON m.descripcion = p.descripcion GROUP BY(descripcion) HAVING count(p.descripcion) = 
-                                                            (SELECT MAX(sel.cantidad_ventas) FROM 
-                                                            (SELECT count(p.id) as cantidad_ventas FROM pedidodetalle p GROUP BY(descripcion)) sel);");
+        $objDeLaRespuesta = new stdclass();
+        $consulta = $objetoAccesoDato->RetornarConsulta("SELECT p.id, p.descripcion, SUM(p.cantidad) as cantidad_ventas
+                                                         FROM PedidoDetalle p GROUP BY(descripcion) HAVING SUM(p.cantidad) = (SELECT MAX(sel.cantidad_ventas) 
+                                                         FROM (SELECT SUM(p.cantidad) as cantidad_ventas 
+                                                         FROM PedidoDetalle p GROUP BY(descripcion) HAVING p.descripcion like 'Menu%') sel)");
 
         //$consulta->bindValue(':codigo',$codigo, PDO::PARAM_STR);
 		$consulta->execute();
 		//$pedido = $consulta->fetchObject('Pedido');
-		return $consulta->fetchAll();
+		$pedidodetalle = $consulta->fetchAll();
+		 $objDeLaRespuesta->id = $pedidodetalle[0][0];
+		 $objDeLaRespuesta->Menu = $pedidodetalle[0][1];
+		 $objDeLaRespuesta->Cantidad_Ventas = $pedidodetalle[0][2];
+		return $objDeLaRespuesta;
     }
     public static function TraerPedidosMenosVendidos(){
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-        $consulta = $objetoAccesoDato->RetornarConsulta("SELECT p.id, m.descripcion, count(p.id) as cantidad_ventas
-                                                            FROM pedidodetalle p INNER JOIN menu m
-                                                            ON m.descripcion = p.descripcion GROUP BY(descripcion) HAVING count(p.descripcion) = 
-                                                            (SELECT MIN(sel.cantidad_ventas) FROM 
-                                                            (SELECT count(p.id) as cantidad_ventas FROM pedidodetalle p GROUP BY(descripcion)) sel);");
+        $objDeLaRespuesta = new stdclass();
+        $consulta = $objetoAccesoDato->RetornarConsulta("SELECT p.id, p.descripcion, SUM(p.cantidad) as cantidad_ventas 
+                                                         FROM PedidoDetalle p GROUP BY(descripcion) HAVING SUM(p.cantidad) = (SELECT MIN(sel.cantidad_ventas) 
+                                                         FROM (SELECT SUM(p.cantidad) as cantidad_ventas 
+                                                         FROM PedidoDetalle p GROUP BY(descripcion) HAVING p.descripcion like 'Menu%') sel)");
         //$consulta->bindValue(':codigo',$codigo, PDO::PARAM_STR);
 		$consulta->execute();
-		//$pedido = $consulta->fetchObject('Pedido');
-		return $consulta->fetchAll();
+		//$pedido = $consulta->fetchObject('Pedido
+			$pedidodetalle = $consulta->fetchAll();
+		 $objDeLaRespuesta->id = $pedidodetalle[0][0];
+		 $objDeLaRespuesta->Menu = $pedidodetalle[0][1];
+		 $objDeLaRespuesta->Cantidad_Ventas = $pedidodetalle[0][2];
+		return $objDeLaRespuesta;
     }
     public static function ActualizarPedidosVendidos(){
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 

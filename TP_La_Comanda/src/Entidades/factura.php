@@ -12,7 +12,7 @@ class Factura {
     public function AltaDeFactura() {
         $this->fecha = date("Y-m-d");
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-        $consulta = $objetoAccesoDato->RetornarConsulta("INSERT into facturas (fecha,idresponsable,idpedido,idmesa,importe)values(:fecha,:idresponsable,:idpedido,:idmesa,:importe)");
+        $consulta = $objetoAccesoDato->RetornarConsulta("INSERT into factura (fecha,idresponsable,idpedido,idmesa,importe)values(:fecha,:idresponsable,:idpedido,:idmesa,:importe)");
         $consulta->bindValue(':fecha', $this->fecha, PDO::PARAM_STR);
         $consulta->bindValue(':idresponsable', $this->idresponsable, PDO::PARAM_INT);
         $consulta->bindValue(':idpedido', $this->idpedido, PDO::PARAM_INT);
@@ -24,15 +24,22 @@ class Factura {
 
     public function BajaDeFactura() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-        $consulta = $objetoAccesoDato->RetornarConsulta("DELETE from facturas WHERE id=:id");	
+        $consulta = $objetoAccesoDato->RetornarConsulta("DELETE from factura WHERE id=:id");	
         $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);		
         $consulta->execute();
         return $consulta->rowCount();
     }
+    public static function TraerFactura($id) {
+        $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
+        $consulta = $objetoAccesoDato->RetornarConsulta("SELECT * from factura WHERE id=:id");	
+        $consulta->bindValue(':id', $id, PDO::PARAM_INT);		
+        $consulta->execute();
+        return $consulta->fetchObject("Factura");
+    }
 
     public function ModificacionDeFactura() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-        $consulta = $objetoAccesoDato->RetornarConsulta("UPDATE facturas set fecha=:fecha, idresponsable=:idresponsable, idmesa=:idmesa, idpedido=:idpedido, importe=:importe WHERE id=:id");
+        $consulta = $objetoAccesoDato->RetornarConsulta("UPDATE factura set fecha=:fecha, idresponsable=:idresponsable, idmesa=:idmesa, idpedido=:idpedido, importe=:importe WHERE id=:id");
         $consulta->bindValue(':id', $this->id, PDO::PARAM_INT);
         $consulta->bindValue(':fecha', $this->fecha, PDO::PARAM_STR);
         $consulta->bindValue(':idresponsable', $this->idresponsable, PDO::PARAM_INT);

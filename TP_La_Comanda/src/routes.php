@@ -26,9 +26,9 @@ return function (App $app) {
         $response->write(MesaApi::ModificarMesa($request,$response,$args));
     })->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
     
-    $app->post('/mesa/cancelar', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(MesaApi::CancelarMesa($request,$response,$args));
-    })->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
+    // $app->post('/mesa/cancelar', function (Request $request, Response $response, array $args) use ($container) {
+    //     $response->write(MesaApi::CancelarMesa($request,$response,$args));
+    // })->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
 
     $app->post('/mesa/cerrar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(MesaApi::CerrarMesa($request,$response,$args));
@@ -39,47 +39,59 @@ return function (App $app) {
     })->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
 
     $app->post('/mesa/comentario', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(MesaApi::CerrarMesa($request,$response,$args));
+        $response->write(MesaApi::AgregarComentario($request,$response,$args));
     });
     $app->post('/mesa/comentario/borrar', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(MesaApi::CerrarMesa($request,$response,$args));
+        $response->write(MesaApi::BorrarComentario($request,$response,$args));
     });
     $app->post('/mesa/comentario/modificar', function (Request $request, Response $response, array $args) use ($container) {
-        $response->write(MesaApi::CerrarMesa($request,$response,$args));
+        $response->write(MesaApi::ModificarComentario($request,$response,$args));
     });
-    $app->get('/masUsada',function (Request $request, Response $response, array $args) use ($container){
-     $response->write(MesaApi::class . ':MesaMasUsada')->add(\MWEmpleado::class . ':VerificarUsuarioAdmin');
-    });
+        $app->get('/mesa/masUsada',function (Request $request, Response $response, array $args) use ($container){
+            $response->write(MesaApi::MesaMasUsada($request,$response,$args));
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
+
+    $app->get('/mesa/menosUsada',function (Request $request, Response $response, array $args) use ($container){
+    $response->write(MesaApi::MesaMenosUsada($request,$response,$args));
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
+    $app->get('/mesa/masFacturada',function (Request $request, Response $response, array $args) use ($container){
+        $response->write(MesaApi::class . ':MesaMasUsada')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
+
+    $app->get('/mesa/menosFacturada',function (Request $request, Response $response, array $args) use ($container){
+        $response->write(MesaApi::MesaMenosFacturada($request,$response,$args));
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
+
+    $app->get('/mesa/facturadaConMasImporte',function (Request $request, Response $response, array $args) use ($container){
+        $response->write(MesaApi::FacturadaConMasImporte($request,$response,$args));
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
+
+    $app->get('/mesa/facturadaConMenosImporte',function (Request $request, Response $response, array $args) use ($container){
+        $response->write(MesaApi::FacturadaConMenosImporte($request,$response,$args));
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
+
+    $app->get('/mesa/masPuntuada',function (Request $request, Response $response, array $args) use ($container){
+    $response->write(MesaApi::MesaConMejorPuntuacion($request,$response,$args));
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
     
-    $app->get('/menosUsada',function (Request $request, Response $response, array $args) use ($container){
-        $response->write(MesaApi::class . ':MesaMasUsada')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
-    });
-    $app->get('/masFacturada',function (Request $request, Response $response, array $args) use ($container){
-        $response->write(MesaApi::class . ':MesaMasUsada')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
-    });
-    $app->get('/menosFacturada',function (Request $request, Response $response, array $args) use ($container){
-        $response->write(MesaApi::class . ':MesaMenosUsada')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
-    });
-    $app->get('/facturadaConMasImporte',function (Request $request, Response $response, array $args) use ($container){
-        $response->write(MesaApi::class . ':FactiradaConMasImporte')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
-    });
-    $app->get('/facturadaConMenosImporte',function (Request $request, Response $response, array $args) use ($container){
-        $response->write(MesaApi::class . ':FacturadaConMenosImporte')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
-    });
-    $app->get('/masPuntuada',function (Request $request, Response $response, array $args) use ($container){
-        $response->write(MesaApi::class . ':MasPuntuada')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
-       });
-    $app->get('/menosPuntuada',function (Request $request, Response $response, array $args) use ($container){
-        $response->write(MesaApi::class . ':MenosPuntuada')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
-    });
+    $app->get('/mesa/menosPuntuada',function (Request $request, Response $response, array $args) use ($container){
+        $response->write(MesaApi::MesaConPeorPuntuacion($request,$response,$args));
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
+
     $app->get('/facturacion/fechas',function (Request $request, Response $response, array $args) use ($container){
-        $response->write(MesaApi::class . ':FacturacionEntreFechas')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
-    });
+        $response->write(MesaApi::FacturacionEntreFechas($request,$response,$args));
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
+
     $app->get('/facturacion/promedioMensual',function (Request $request, Response $response, array $args) use ($container){
-        $response->write(MesaApi::class . ':PromedioMensual')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
+        $response->write(MesaApi::PromedioMensual($request,$response,$args));
     });
     $app->get('/facturacion/promedioMensualMesa',function (Request $request, Response $response, array $args) use ($container){
-        $response->write(MesaApi::class . ':PromedioMensualMesa')->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
+    $response->write(MesaApi::PromedioMensualMesa($request,$response,$args));
+    })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
+
+    //Grupo Menu
+    $app->get('/menu',function (Request $request, Response $response, array $args) use ($container){
+        $response->write(Menu::TraerMenu($request,$response,$args));
     });
     //Grupo Pedido
     $app->get('/pedido/exportar/excel', function (Request $request, Response $response, array $args) use ($container) { 
@@ -89,7 +101,7 @@ return function (App $app) {
     });//->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
     $app->get('/pedido/exportar/pdf', function (Request $request, Response $response, array $args) use ($container) { 
         // $pedidos = PedidoApi::TraerPedidosPorTipoEmpleado($request,$response,$args);
-         $strExcel = PedidoApi::ExportarDatosAPDF("asd");
+         $strExcel = PedidoApi::ExportarDatosAPDF();
          $response->write("");
      });//->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
      

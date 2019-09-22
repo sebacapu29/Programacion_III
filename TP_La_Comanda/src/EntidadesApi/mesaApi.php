@@ -90,8 +90,8 @@ class MesaApi extends Mesa {
         $miComentario = new Comentario();
         $miComentario->puntaje = $puntaje;
         $miComentario->descripcion = $descripcion;
-        $miComentario->idmesa = $idmesa;
-        $respuesta = $items->AltaDeComentario();
+        $miComentario->idMesa = $idmesa;
+        $respuesta = $miComentario->AltaDeComentario();
         $objDelaRespuesta->respuesta = "Se inserto el comentario con id: $respuesta";
         return $response->withJson($objDelaRespuesta, 200);
     }
@@ -105,12 +105,13 @@ class MesaApi extends Mesa {
         $descripcion = $ArrayDeParametros['descripcion'];
         $idmesa = $ArrayDeParametros['idmesa'];
 
-        $miPedido = Pedido::TraerComentarioConId($id);
-        $miPedido->puntaje = $puntaje;
-        $miPedido->descripcion = $descripcion;
-        $miPedido->idmesa = $idmesa;
+        $miComentario = Comentario::TraerComentarioConId($id);
+        $miComentario->puntaje = $puntaje;
+        $miComentario->descripcion = $descripcion;
+        $miComentario->idmesa = $idmesa;
 
-        $objDelaRespuesta->respuesta = $miPedido->ModificacionDeComentario();
+        $objDelaRespuesta->ComentarioModificado = $miComentario;
+        $objDelaRespuesta->respuesta = $miComentario->ModificacionDeComentario();
 
         return $response->withJson($objDelaRespuesta, 200);
     }
@@ -120,9 +121,14 @@ class MesaApi extends Mesa {
         $objDelaRespuesta= new stdclass();
         $ArrayDeParametros = $request->getParsedBody();
         $id = $ArrayDeParametros['id'];
-
-        $miPedido = Pedido::TraerComentarioConId($id);
-        $objDelaRespuesta->respuesta = $miPedido->BajaDeComentario();
+    
+        if($miComentario!= null || $miComentario != false){
+            $objDelaRespuesta->ComentarioBorrado = $miComentario;
+            $objDelaRespuesta->respuesta = $miComentario->BajaDeComentario();   
+            }
+        else{
+       $objDelaRespuesta->respuesta = "No se encontro el comentario";
+   }
 
         return $response->withJson($objDelaRespuesta, 200);
     }
@@ -147,8 +153,9 @@ class MesaApi extends Mesa {
 
         if($mesa != NULL && $responsable != NULL  && $pedido != NULL && $importe != NULL && $miMesa->id != "" ) {
             $respuesta = $nuevaFactura->AltaDeFactura();
-            $respuesta = ($miMesa->ModificacionDeMesa() . $respuesta); 
-            $objDelaRespuesta->respuesta = "Se insertaron la factura con id: $respuesta"; 
+            $respuesta->data = "Factura N°: " . $respuesta; 
+            $respuesta->factura = Factura::TraerFactura($respuesta);
+            $objDelaRespuesta->respuesta = $respuesta; 
         } else {
             $objDelaRespuesta->respuesta = "Se necesita especificar un los parametros (Responsable, Mesa, Pedido, Importe)";
         }

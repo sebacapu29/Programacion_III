@@ -1,12 +1,15 @@
 <?php
 
 use Dompdf\Dompdf;
+require_once 'pedidoDetalle.php';
 
 class PdfHelper{
 
 
     public function ConstruirPDF(){
 
+       $objPedidoMenosVendidos = PedidoDetalle::TraerPedidosMenosVendidos();
+       $objPedidoMasVendidos = PedidoDetalle::TraerPedidosMasVendidos();
       //generate some PDFs!
         $dompdf = new DOMPDF();  //if you use namespaces you may use new \DOMPDF()
         $dompdf->loadHtml("<!DOCTYPE html>
@@ -18,13 +21,36 @@ class PdfHelper{
             <title>Document</title>
         </head>
         <body>
-            <p>jhfjhf</p>
+        <h1>Lista de Pedidos Mas vendidos</h1>
+        <table>
+            <tr>
+                <th> ID </th>
+                <th> Menu </th>
+                <th> Cantidad Vendida </th>
+            </tr>
+            <tr>
+                <td>".$objPedidoMasVendidos->id ." </td>
+                <td>". $objPedidoMasVendidos->Menu ." </td>
+                <td>". $objPedidoMasVendidos->Cantidad_Ventas ." </td>
+            </tr>
+        </table>
+        <h1>Lista de Pedidos Menos vendidos</h1>
+        <table>
+            <tr>
+                <th> ID </th>
+                <th> Menu </th>
+                <th> Cantidad Vendida </th>
+            </tr>
+            <tr>
+                <td>".$objPedidoMenosVendidos->id ." </td>
+                <td>".$objPedidoMenosVendidos->Menu ." </td>
+                <td>".$objPedidoMenosVendidos->Cantidad_Ventas ." </td>
+            </tr>
+        </table>
         </body>
         </html>");
         $dompdf->render();
-        $dompdf->stream("sample.pdf", array("Attachment"=>0));
+        $dompdf->stream("pedidos.pdf", array("Attachment"=>0));
     }
 }
-
-
 ?>

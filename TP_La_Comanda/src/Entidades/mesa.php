@@ -31,7 +31,6 @@ class Mesa {
 		$consulta->bindValue(':estado', $this->estado, PDO::PARAM_INT);
 		return $consulta->execute();
     }
-
     public static function TraerTodasLasMesas() {
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
 	    $consulta = $objetoAccesoDato->RetornarConsulta("SELECT * from mesa");
@@ -98,10 +97,10 @@ class Mesa {
         try {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
 
-            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT p.idmesa, count(p.idmesa) as cantidad_usos FROM pedido p
-                                                            GROUP BY(p.idmesa) HAVING count(p.idmesa) = 
-                                                            (SELECT MAX(subquery.cantidad_usos) FROM 
-                                                            (SELECT count(p.idmesa) as cantidad_usos FROM pedido p GROUP BY(p.idmesa)) subquery);");
+            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT f.idmesa, SUM(f.importe) importe_mas_facturado FROM factura f
+                                                            GROUP BY(f.idmesa) HAVING ROUND(SUM(f.importe),2) = 
+                                                            (SELECT MIN(subquery.importe_mas_facturado) FROM 
+                                                            (SELECT ROUND(SUM(f.importe),2) as importe_mas_facturado FROM factura f GROUP BY(f.idmesa)) subquery);");
 
             $consulta->execute();
 
@@ -119,10 +118,10 @@ class Mesa {
         try {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
 
-            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT f.idmesa, SUM(f.importe) as facturacion_total FROM factura f 
-                                                            GROUP BY(f.idmesa) HAVING SUM(f.importe) = 
-                                                            (SELECT MIN(sel.facturacion_total) FROM
-                                                            (SELECT SUM(f2.importe) as facturacion_total FROM factura f2 GROUP BY(f2.idmesa)) sel)");
+                $consulta = $objetoAccesoDato->RetornarConsulta("SELECT f.idmesa, SUM(f.importe) importe_mas_facturado FROM factura f
+                                                                GROUP BY(f.idmesa) HAVING ROUND(SUM(f.importe),2) = 
+                                                                (SELECT MIN(subquery.importe_mas_facturado) FROM 
+                                                                (SELECT ROUND(SUM(f.importe),2) as importe_mas_facturado FROM factura f GROUP BY(f.idmesa)) subquery);");
 
             $consulta->execute();
 
@@ -180,10 +179,10 @@ class Mesa {
         try {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
 
-            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT f.codigoMesa, AVG(f.puntuacion_mesa) as puntuacion_promedio FROM encuesta f 
-                                                            GROUP BY(f.codigoMesa) HAVING AVG(f.puntuacion_mesa) = 
-                                                            (SELECT MAX(sel.puntuacion_promedio) FROM
-                                                            (SELECT AVG(f2.puntuacion_mesa) as puntuacion_promedio FROM encuesta f2 GROUP BY(f2.codigoMesa)) sel);");
+            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT c.idMesa, AVG(c.puntaje) as puntuacion_promedio FROM comentarios c 
+                                                             GROUP BY(c.idMesa) HAVING round(AVG(c.puntaje),2) = 
+                                                            (SELECT MAX(subquery.puntuacion_promedio) FROM
+                                                            (SELECT round(AVG(c2.puntaje),2) as puntuacion_promedio FROM comentarios c2 GROUP BY(c2.idMesa)) subquery);");
 
             $consulta->execute();
 
@@ -202,10 +201,10 @@ class Mesa {
         try {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
 
-            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT f.codigoMesa, AVG(f.puntuacion_mesa) as puntuacion_promedio FROM encuesta f 
-                                                            GROUP BY(f.codigoMesa) HAVING AVG(f.puntuacion_mesa) = 
-                                                            (SELECT MIN(sel.puntuacion_promedio) FROM
-                                                            (SELECT AVG(f2.puntuacion_mesa) as puntuacion_promedio FROM encuesta f2 GROUP BY(f2.codigoMesa)) sel);");
+            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT c.idMesa, AVG(c.puntaje) as puntuacion_promedio FROM comentarios c 
+                                                            GROUP BY(c.idMesa) HAVING round(AVG(c.puntaje),2) = 
+                                                            (SELECT MIN(subquery.puntuacion_promedio) FROM
+                                                            (SELECT round(AVG(c2.puntaje),2) as puntuacion_promedio FROM comentarios c2 GROUP BY(c2.idMesa)) subquery);");
 
             $consulta->execute();
 

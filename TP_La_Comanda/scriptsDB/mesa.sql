@@ -7,7 +7,7 @@ CREATE TABLE `mesa` (
   `sector` int(11),
   `estado` int(11)
 );
-
+alter table mesa MODIFY id int NOT null AUTO_INCREMENT
 --
 -- Insercion datos
 --
