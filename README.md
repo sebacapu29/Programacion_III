@@ -11,5 +11,5 @@ UTNfra
   <li>SlimFramework v3.1</li>
   <li>JWT v5.0</li>
   <li>POO</li>
-  <li>DOMPDF</li> <a href="https://github.com/dompdf/dompdf">GitHub</a>
+  <li>DOMPDF: <a href="https://github.com/dompdf/dompdf">GitHub</a> </li> 
 </ul>
