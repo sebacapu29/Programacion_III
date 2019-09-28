@@ -229,9 +229,9 @@ class MesaApi extends Mesa {
     
     public function FacturacionEntreFechas($request,$response,$args){
         $parametros = $request->getParsedBody();
-        // $codigoMesa = $parametros["sector"];
-        $fecha1 = $parametros["fecha1"];
-        $fecha2 = $parametros["fecha2"];
+        $fecha1 = $request->getParam('fecha1');
+        $fecha2 = $request->getParam('fecha2');
+        
         $respuesta = Mesa::FacturacionEntreFechas2($fecha1,$fecha2);
         $newResponse = $response->withJson($respuesta,200);
         return $newResponse;

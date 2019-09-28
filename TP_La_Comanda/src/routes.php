@@ -7,6 +7,7 @@ require_once '../src/Entidades/login.php';
 require_once '../src/EntidadesApi/mesaApi.php';
 require_once '../src/EntidadesApi/pedidoApi.php';
 require_once '../src/EntidadesApi/empleadoApi.php';
+require_once '../src/Entidades/menu.php';
 require_once '../src/MiddleWare/MWparaAutentificar.php';
 require_once '../src/MiddleWare/MWparaRegistroOperacion.php';
 
@@ -87,7 +88,7 @@ return function (App $app) {
 
     //Grupo Menu
     $app->get('/menu',function (Request $request, Response $response, array $args) use ($container){
-        $response->write(Menu::TraerMenu($request,$response,$args));
+        $response->write(Menu::Mostrar($request,$response,$args));
     });
     //Grupo Pedido
     $app->get('/pedido/exportar/excel', function (Request $request, Response $response, array $args) use ($container) { 
