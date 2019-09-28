@@ -162,7 +162,7 @@ class PedidoApi extends Pedido {
         $datos = AutentificadorJWT::ObtenerData($token);
         $empleado = Empleado::TraerEmpleadoConId((int)$datos->idempleado);
         
-        switch($empleado->tipo) {
+        switch($empleado[0]->tipo) {
             case TipoDeEmpleado::Socio: 
                 $pedidos=Pedido::TraerTodosLosPedidos();
                 break;
@@ -185,9 +185,7 @@ class PedidoApi extends Pedido {
                 $pedidos = NULL;
         }
         if($pedidos!= NULL){
-            foreach($pedidos as $aux) {
-                $respuesta = $respuesta . $aux->MostrarDatosDelPedido() . "<br>";
-            }
+                $respuesta = $pedidos;
         }
         else{
             $respuesta = "Id Empleado Incorrecto";
