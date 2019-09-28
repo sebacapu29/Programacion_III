@@ -25,10 +25,6 @@ return function (App $app) {
     $app->post('/mesa/modificar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(MesaApi::ModificarMesa($request,$response,$args));
     })->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
-    
-    // $app->post('/mesa/cancelar', function (Request $request, Response $response, array $args) use ($container) {
-    //     $response->write(MesaApi::CancelarMesa($request,$response,$args));
-    // })->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
 
     $app->post('/mesa/cerrar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(MesaApi::CerrarMesa($request,$response,$args));
@@ -62,19 +58,19 @@ return function (App $app) {
         $response->write(MesaApi::MesaMenosFacturada($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
 
-    $app->get('/mesa/facturadaConMasImporte',function (Request $request, Response $response, array $args) use ($container){
+    $app->get('/mesa/facturadaconmasimporte',function (Request $request, Response $response, array $args) use ($container){
         $response->write(MesaApi::FacturadaConMasImporte($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
 
-    $app->get('/mesa/facturadaConMenosImporte',function (Request $request, Response $response, array $args) use ($container){
+    $app->get('/mesa/facturadaconmenosimporte',function (Request $request, Response $response, array $args) use ($container){
         $response->write(MesaApi::FacturadaConMenosImporte($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
 
-    $app->get('/mesa/masPuntuada',function (Request $request, Response $response, array $args) use ($container){
+    $app->get('/mesa/maspuntuada',function (Request $request, Response $response, array $args) use ($container){
     $response->write(MesaApi::MesaConMejorPuntuacion($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
     
-    $app->get('/mesa/menosPuntuada',function (Request $request, Response $response, array $args) use ($container){
+    $app->get('/mesa/menospuntuada',function (Request $request, Response $response, array $args) use ($container){
         $response->write(MesaApi::MesaConPeorPuntuacion($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
 
@@ -95,12 +91,10 @@ return function (App $app) {
     });
     //Grupo Pedido
     $app->get('/pedido/exportar/excel', function (Request $request, Response $response, array $args) use ($container) { 
-       // $pedidos = PedidoApi::TraerPedidosPorTipoEmpleado($request,$response,$args);
-        $strExcel = PedidoApi::ExportarDatosAExcel("asd");
+        $strExcel = PedidoApi::ExportarDatosAExcel();
         $response->write("");
     });//->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
     $app->get('/pedido/exportar/pdf', function (Request $request, Response $response, array $args) use ($container) { 
-        // $pedidos = PedidoApi::TraerPedidosPorTipoEmpleado($request,$response,$args);
          $strExcel = PedidoApi::ExportarDatosAPDF();
          $response->write("");
      });//->add(\MWparaRegistroOperacion::class . ':IncrementarOperacionAEmpleado')->add(\MWparaAutentificar::class . ':VerificarEmpleadoMozo');
@@ -173,7 +167,7 @@ return function (App $app) {
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');
 
     $app->post('/empleado', function (Request $request, Response $response, array $args) use ($container) {    
-        $response->write(EmpleadoApi::AltaEmpleado($request,$response,$args));
+        $response->write(EmpleadoApi::InsertarEmpleado($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioAdmin');;
     
     $app->post('/empleado/fichar', function (Request $request, Response $response, array $args) use ($container) {    

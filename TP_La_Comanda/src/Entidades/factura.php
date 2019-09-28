@@ -80,13 +80,23 @@ class Factura {
                 return "Mes no válido";
                 break;
         }
+        if($mes < 10){
+            $mes = '0' . $mes;
+        }
         $fechaInicial = '2019-'.$mes.'-'.'01';
         $fechaFinal = '2019-'.$mes.'-'.$cantDias;
-        $consulta = $objetoAccesoDato->RetornarConsulta("SELECT AVG(importe) as promedioMensual FROM factura f
+  
+        
+        $consulta = $objetoAccesoDato->RetornarConsulta("SELECT ROUND(AVG(importe),3) as promedioMensual FROM factura f
                                                          WHERE f.fecha BETWEEN  :fecha1 AND  :fecha2");
         $consulta->bindValue(':fecha1', $fechaInicial, PDO::PARAM_STR);
         $consulta->bindValue(':fecha2', $fechaFinal, PDO::PARAM_STR);
-        return $consulta->execute();
+        $consulta->execute();
+        $retornoDeConsulta = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        if($retornoDeConsulta[0][0]==NULL){
+            return "No se encontro registro de facturacion en el mes ingresado";
+        }
+        return $consulta->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 

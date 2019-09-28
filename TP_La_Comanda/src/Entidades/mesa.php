@@ -96,7 +96,7 @@ class Mesa {
     {
         try {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-
+            $objRespuesta = new stdclass();
             $consulta = $objetoAccesoDato->RetornarConsulta("SELECT f.idmesa, SUM(f.importe) importe_mas_facturado FROM factura f
                                                             GROUP BY(f.idmesa) HAVING ROUND(SUM(f.importe),2) = 
                                                             (SELECT MIN(subquery.importe_mas_facturado) FROM 
@@ -104,7 +104,10 @@ class Mesa {
 
             $consulta->execute();
 
-            $resultado = $consulta->fetchAll();
+            $objQuery =$consulta->fetchAll();
+            $objRespuesta->idmesa = $objQuery[0][0];
+            $objRespuesta->mesa_con_mas_facturacion = $objQuery[0][1];
+            $resultado = $objRespuesta;
         } catch (Exception $e) {
             $resultado = $e->getMessage();
         }
@@ -117,15 +120,17 @@ class Mesa {
     {
         try {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
-
-                $consulta = $objetoAccesoDato->RetornarConsulta("SELECT f.idmesa, SUM(f.importe) importe_mas_facturado FROM factura f
-                                                                GROUP BY(f.idmesa) HAVING ROUND(SUM(f.importe),2) = 
-                                                                (SELECT MIN(subquery.importe_mas_facturado) FROM 
-                                                                (SELECT ROUND(SUM(f.importe),2) as importe_mas_facturado FROM factura f GROUP BY(f.idmesa)) subquery);");
+            $objRespuesta = new stdclass();
+            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT f.idmesa, SUM(f.importe) importe_mas_facturado FROM factura f
+                                                            GROUP BY(f.idmesa) HAVING ROUND(SUM(f.importe),2) = 
+                                                            (SELECT MIN(subquery.importe_mas_facturado) FROM 
+                                                            (SELECT ROUND(SUM(f.importe),2) as importe_mas_facturado FROM factura f GROUP BY(f.idmesa)) subquery);");
 
             $consulta->execute();
-
-            $resultado = $consulta->fetchAll();
+            $objQuery =$consulta->fetchAll();
+            $objRespuesta->idmesa = $objQuery[0][0];
+            $objRespuesta->mesa_con_mas_facturacion = $objQuery[0][1];
+            $resultado = $objRespuesta;
         } catch (Exception $e) {
             $resultado = $e->getMessage();
         }
@@ -144,7 +149,7 @@ class Mesa {
 
             $consulta->execute();
 
-            $resultado = $consulta->fetchAll();
+            $resultado = $consulta->fetchObject("Factura");
         } catch (Exception $e) {
             $mensaje = $e->getMessage();
             $resultado = array("Estado" => "ERROR", "Mensaje" => "$mensaje");
@@ -164,7 +169,7 @@ class Mesa {
 
             $consulta->execute();
 
-            $resultado = $consulta->fetchAll();
+            $resultado = $consulta->fetchObject("Factura");
         } catch (Exception $e) {
             $mensaje = $e->getMessage();
             $resultado = array("Estado" => "ERROR", "Mensaje" => "$mensaje");
@@ -201,10 +206,10 @@ class Mesa {
         try {
             $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso();
 
-            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT c.idMesa, AVG(c.puntaje) as puntuacion_promedio FROM comentarios c 
-                                                            GROUP BY(c.idMesa) HAVING round(AVG(c.puntaje),2) = 
+            $consulta = $objetoAccesoDato->RetornarConsulta("SELECT c.idmesa, AVG(c.puntaje) as puntuacion_promedio FROM comentarios c 
+                                                            GROUP BY(c.idmesa) HAVING round(AVG(c.puntaje),2) = 
                                                             (SELECT MIN(subquery.puntuacion_promedio) FROM
-                                                            (SELECT round(AVG(c2.puntaje),2) as puntuacion_promedio FROM comentarios c2 GROUP BY(c2.idMesa)) subquery);");
+                                                            (SELECT round(AVG(c2.puntaje),2) as puntuacion_promedio FROM comentarios c2 GROUP BY(c2.idmesa)) subquery);");
 
             $consulta->execute();
 
@@ -230,7 +235,7 @@ class Mesa {
             $consulta->bindValue(':fecha2', $fecha2, PDO::PARAM_STR);
             $consulta->execute();
 
-            $resultado = $consulta->fetchAll();
+            $resultado = $consulta->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             $mensaje = $e->getMessage();
             $resultado = array("Estado" => "ERROR", "Mensaje" => "$mensaje");
@@ -260,7 +265,7 @@ class Mesa {
             return $resultado;
         }
     }
-    public function PromedioMensualMesas($mes) {
+    public function PromedioMensual($mes) {
         $cantDias=0;
 
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
@@ -292,13 +297,23 @@ class Mesa {
                 return "Mes no válido";
                 break;
         }
+        if($mes < 10){
+            $mes = '0' . $mes;
+        }
         $fechaInicial = '2019-'.$mes.'-'.'01';
         $fechaFinal = '2019-'.$mes.'-'.$cantDias;
+  
+        
         $consulta = $objetoAccesoDato->RetornarConsulta("SELECT AVG(idmesa) as promedioMensual FROM factura f
-                                                         WHERE f.fecha BETWEEN  :fecha1 AND  :fecha2");
+                                                        WHERE f.fecha BETWEEN  :fecha1 AND  :fecha2");
         $consulta->bindValue(':fecha1', $fechaInicial, PDO::PARAM_STR);
         $consulta->bindValue(':fecha2', $fechaFinal, PDO::PARAM_STR);
-        return $consulta->execute();
+        $consulta->execute();
+        $retornoDeConsulta = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        if($retornoDeConsulta[0]["promedioMensual"]==NULL){
+            return "No se encontro registro de facturacion en el mes ingresado";
+        }
+        return $retornoDeConsulta;
     }
 }
 

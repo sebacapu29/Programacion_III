@@ -203,13 +203,13 @@ class MesaApi extends Mesa {
         return $newResponse;
     }
 
-    public function FacturaConMasImporte($request,$response,$args){
+    public function FacturadaConMasImporte($request,$response,$args){
         $respuesta = Mesa::FacturaConMayorImporte();
         $newResponse = $response->withJson($respuesta,200);
         return $newResponse;
     }
     
-    public function FacturaConMenosImporte($request,$response,$args){
+    public function FacturadaConMenosImporte($request,$response,$args){
         $respuesta = Mesa::FacturaConMenorImporte();
         $newResponse = $response->withJson($respuesta,200);
         return $newResponse;
@@ -246,7 +246,7 @@ class MesaApi extends Mesa {
     public function PromedioMensualMesa($request,$response,$args){
         $parametros = $request->getParsedBody();
         $mes = $parametros["mes"];
-        $respuesta = Factura::PromedioMensualImporteMesa($fecha1,$fecha2);
+        $respuesta = Factura::PromedioMensual($mes);
         $newResponse = $response->withJson($respuesta,200);
         return $newResponse;
     }

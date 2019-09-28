@@ -10,7 +10,7 @@ class InfoEmpleado {
     public function FichajeEmpleado() {
         $horaArgentina = new DateTime("now", new DateTimeZone('America/Argentina/Buenos_Aires'));
         $objetoAccesoDato = AccesoDatos::dameUnObjetoAcceso(); 
-        $consulta = $objetoAccesoDato->RetornarConsulta("INSERT into infoEmpleado (horarioIngreso,fechaIngreso,idempleado)values(:horarioIngreso,:fechaIngreso,:idempleado)");
+        $consulta = $objetoAccesoDato->RetornarConsulta("INSERT into infoempleado (horarioingreso,fechaingreso,idempleado)values(:horarioIngreso,:fechaIngreso,:idempleado)");
         $consulta->bindValue(':fechaIngreso', date("Y-m-d"), PDO::PARAM_STR);
         $consulta->bindValue(':horarioIngreso',$horaArgentina->format('H:i:s'),PDO::PARAM_STR);
         $consulta->bindValue(':idempleado', $this->idempleado, PDO::PARAM_INT);
