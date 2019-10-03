@@ -7,6 +7,7 @@ require_once '../src/clases/login.php';
 require_once '../src/clases/usuarioApi.php';
 require_once '../src/clases/MiddleWare/MWparaAutentificar.php';
 require_once '../src/clases/compraApi.php';
+require_once '../src/clases/productos.php';
 require_once '../src/clases/MiddleWare/MWGuardarInfoEnDB.php';
 
 return function (App $app) {
@@ -22,6 +23,16 @@ return function (App $app) {
         $response->write(UsuarioApi::TraerTodos($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
 
+    $app->get('/productos', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(json_encode(Producto::TraerTodoLosProductos($request,$response,$args)));
+    });//->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
+
+    $app->post('/productos/borrar', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(json_encode(Producto::BorrarProducto($request,$response,$args)));
+    });
+    $app->get('/productos/buscar', function (Request $request, Response $response, array $args) use ($container) {
+        $response->write(json_encode(Producto::TraerProductoPorDescripcion($request,$response,$args)));
+    });
     $app->post('/usuario/modificar', function (Request $request, Response $response, array $args) use ($container) {
         $response->write(UsuarioApi::ModificarUsuario($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
@@ -39,7 +50,5 @@ return function (App $app) {
         $response->write(CompraApi::ConsultarCompra($request,$response,$args));
     })->add(\MWparaAutentificar::class . ':VerificarUsuarioToken');
 
-    $app->add(\MWparaCORS::class . 'HabilitarCORSTodos');
-    $app->add(new Tuupola\Middleware\CorsMiddleware);
-    //$app->add(\MWGuardarInfoEnDB::class . ':GuardarDatosEnDB');//middleware global
+    //$app->add(\MWparaCORS::class . 'HabilitarCORSTodos');
 };
